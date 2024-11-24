@@ -243,7 +243,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-11-24 11:59:33" itemprop="dateModified" datetime="2024-11-24T11:59:33+08:00">2024-11-24</time>
+      <time title="Modified: 2024-11-24 14:41:31" itemprop="dateModified" datetime="2024-11-24T14:41:31+08:00">2024-11-24</time>
     </span>
 
   
@@ -323,13 +323,13 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">const</span> promise1 = <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(<span class="string">`芜湖`</span>)</span><br><span class="line">	promise1.<span class="title function_">then</span>(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(value))</span><br><span class="line"><span class="comment">//-&gt; 芜湖</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> promise1 = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> <span class="title function_">resolve</span>(<span class="number">7777</span>))</span><br><span class="line">    <span class="keyword">const</span> promise2 = <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(promise1)</span><br><span class="line">    promise2.<span class="title function_">then</span>(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(value))</span><br><span class="line"><span class="comment">//=&gt; 7777</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> thenable = &#123;</span><br><span class="line">  		<span class="attr">then</span>: <span class="keyword">function</span>(<span class="params">resolve, reject</span>) &#123;</span><br><span class="line">    		<span class="title function_">resolve</span>(<span class="number">42</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> promise1 = <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(thenable);</span><br><span class="line">	promise1.<span class="title function_">then</span>(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(value))</span><br><span class="line"><span class="comment">//-&gt; 42</span></span><br></pre></td></tr></table></figure>
 
 <hr>
-<p>总结一下</p>
-<p>​	Promise.all 相当于宝可梦中成功集齐八个道馆徽章才能挑战联盟，少一个即为失败。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>​	Promise.all 相当于宝可梦中成功集齐八个道馆徽章才能挑战联盟，少一个即为失败。</p>
 <p>​	Promise.allSettled 相当于一颗苹果树，不管好坏，只要结苹果就会把结果返回。</p>
 <p>​	Promise.any 相当于你期考时写对一点沾边的内容都算你有分，但你一点不对就全错。</p>
 <p>​	Promise.race 相当于一场竞赛，第一个到终点的决定结果。</p>
 <p>​	Promise.reject 感觉像教材上学过的亚里士多德的名言，返回的全是错的.</p>
 <p>​	Promise.resolve 。。。我不知道啊，返回“主 &#x3D;&#x3D;&#x3D; 6”算了</p>
+<p>先水这么多，且听下回分解。</p>
 <p>​	</p>
 
       
