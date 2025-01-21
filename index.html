@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -130,6 +130,74 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://159357254680.github.io/2025/01/21/%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/01/21/%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/" class="post-title-link" itemprop="url">执行上下文</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-21 17:33:26" itemprop="dateCreated datePublished" datetime="2025-01-21T17:33:26+08:00">2025-01-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -167,9 +235,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2024-12-16 20:45:34 / Modified: 22:18:43" itemprop="dateCreated datePublished" datetime="2024-12-16T20:45:34+08:00">2024-12-16</time>
+      <time title="Created: 2024-12-16 20:45:34" itemprop="dateCreated datePublished" datetime="2024-12-16T20:45:34+08:00">2024-12-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-12-17 16:55:39" itemprop="dateModified" datetime="2024-12-17T16:55:39+08:00">2024-12-17</time>
     </span>
 
   
@@ -227,6 +301,23 @@
 <li>对初始值state进行一个计算（可以没有）</li>
 </ul>
 <p>​	useReducer和useState各有千秋，但在state逻辑较复杂且包含多个子值，或者下一个state依赖于之前的state等，useReducer回避useState更加适用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initialState = &#123;<span class="attr">count</span>: <span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">reducer</span> =(<span class="params">state,action</span>) =&gt; &#123;</span><br><span class="line"> 	<span class="keyword">switch</span>(action.<span class="property">type</span>)&#123;</span><br><span class="line"> 		<span class="keyword">case</span><span class="string">&#x27;increment&#x27;</span>:</span><br><span class="line"> 			<span class="keyword">return</span>&#123;<span class="attr">count</span>:state.<span class="property">count</span> + <span class="number">1</span>&#125;;</span><br><span class="line"> 		<span class="keyword">case</span><span class="string">&#x27;decrement&#x27;</span>:</span><br><span class="line"> 			<span class="keyword">return</span>&#123;<span class="attr">count</span>:state.<span class="property">count</span> - <span class="number">1</span>&#125;;</span><br><span class="line"> 		<span class="attr">default</span>:</span><br><span class="line"> 			<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>();</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Example</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">const</span> [state,dispatch] = <span class="title function_">useReducer</span>(reducer,initialState);</span><br><span class="line">	<span class="keyword">return</span> (</span><br><span class="line">		<span class="language-xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="language-xml">			Count:&#123;state.count&#125;</span></span><br><span class="line"><span class="language-xml">			<span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type:&#x27;increment&#x27;&#125;)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">			<span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type:&#x27;decrement&#x27;&#125;)&#125;&gt;-<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">		<span class="tag">&lt;/&gt;</span></span></span><br><span class="line">	)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="5-useRef"><a href="#5-useRef" class="headerlink" title="5.useRef"></a>5.useRef</h3><p>​	useRef()主要用于引用DOM原酸或存储一个可变的值，这个值在整个组件的声明周期保持不变。</p>
+<ul>
+<li>useRef返回一个可变的ref对象，其内部只有一个current属性被初始化为传入的参数。</li>
+<li>useRef返回的ref对象在组件的整个生命周期存在。</li>
+<li>更新current的值并不会触发页面的重新渲染。</li>
+<li>useRef每次渲染时返回一个ref对象。</li>
+</ul>
+<h4 id="5-1引用DOM元素"><a href="#5-1引用DOM元素" class="headerlink" title="5.1引用DOM元素"></a>5.1引用DOM元素</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useRef,useEffect &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">inputFocus</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="keyword">const</span> inputRef = <span class="title function_">useRef</span>(<span class="literal">null</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        inputRef.<span class="property">current</span>.<span class="title function_">focus</span>()</span><br><span class="line">    &#125;,[])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span><span class="language-xml"><span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">&#123;inputRef&#125;</span> /&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>inputRef是一个ref对象，它的current属性在组件首次渲染时设置为null，在组件被挂载时，inputRefer.current指向实际的inputDOM元素。</p>
+<h4 id="5-2存储一个可变的值"><a href="#5-2存储一个可变的值" class="headerlink" title="5.2存储一个可变的值"></a>5.2存储一个可变的值</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;useRef,useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Example</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">const</span> renderCount = <span class="title function_">useRef</span>(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">const</span> [count,setCount] = <span class="title function_">useState</span>(<span class="number">0</span>)</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">const</span> <span class="title function_">increment</span>= (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">		<span class="title function_">setCount</span>(count + <span class="number">1</span>)</span><br><span class="line">		renderCount.<span class="property">current</span>++</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span>(</span><br><span class="line">		<span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">			<span class="tag">&lt;<span class="name">p</span>&gt;</span>Render Count: &#123;renderCount.current&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">			<span class="tag">&lt;<span class="name">p</span>&gt;</span>Count: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">			<span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;increment&#125;</span>&gt;</span>+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">	)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>renderCount是一个ref对象，用来存储渲染次数。每次点击按钮时，increment函数会被调用，count和renderCount的值都会增加。但是，只有count状态的改变会触发组件重新渲染，renderCount.current则不会。</p>
 
       
     </div>
@@ -530,7 +621,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
