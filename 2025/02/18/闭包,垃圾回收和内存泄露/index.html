@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"159357254680.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一 . 闭包1.什么是闭包：​	什么是闭包？引用JS书中的定义，当一个函数能够记住并且访问其所在的作用域，即使这个函数是在作用域之外被执行的，这就是闭包。 123456789function a() &#123;    let a &#x3D; 1 &#x2F;&#x2F; a 是一个被 a 创建的局部变量    function b() &#123; &#x2F;&#x2F; b 是一个内部函数        console.log(a) &#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="闭包，垃圾回收和内存泄露">
+<meta property="og:url" content="https://159357254680.github.io/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/index.html">
+<meta property="og:site_name" content="blog">
+<meta property="og:description" content="一 . 闭包1.什么是闭包：​	什么是闭包？引用JS书中的定义，当一个函数能够记住并且访问其所在的作用域，即使这个函数是在作用域之外被执行的，这就是闭包。 123456789function a() &#123;    let a &#x3D; 1 &#x2F;&#x2F; a 是一个被 a 创建的局部变量    function b() &#123; &#x2F;&#x2F; b 是一个内部函数        console.log(a) &#x2F;&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-02-18T08:58:10.000Z">
+<meta property="article:modified_time" content="2025-02-23T08:08:40.480Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="无">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://159357254680.github.io/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://159357254680.github.io/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/","path":"2025/02/18/闭包,垃圾回收和内存泄露/","title":"闭包，垃圾回收和内存泄露"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>闭包，垃圾回收和内存泄露 | blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80-%E9%97%AD%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">一 . 闭包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E9%97%AD%E5%8C%85%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">1.什么是闭包：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">2.闭包的优点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">3. 闭包的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1%E8%8A%82%E6%B5%81"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">3.1节流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E9%98%B2%E6%8A%96"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">3.2 防抖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">3.3 函数柯里化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">3.4 模块化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">2.</span> <span class="nav-text">二 . 垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%9E%83%E5%9C%BE%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">1. 什么是垃圾：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">2. 垃圾回收机制：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%8F%AF%E8%BE%BE%E6%80%A7%EF%BC%9A"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 可达性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E5%92%8C%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%EF%BC%9A"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 引用计数和标记清除：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">引用计数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">标记清除</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">三. 内存泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">3.1.</span> <span class="nav-text">1.什么是内存泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%80%8E%E6%A0%B7%E4%BC%9A%E5%BC%95%E8%B5%B7%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">3.2.</span> <span class="nav-text">2. 怎样会引起内存泄露</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%97%AD%E5%8C%85"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 闭包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%84%8F%E5%A4%96%E7%9A%84%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2 意外的全局变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%A7%92%E8%90%BD%E7%9A%84%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.2.3.</span> <span class="nav-text">2.3 角落的定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E8%A2%AB%E9%81%97%E5%BF%98%E7%9A%84DOM%E5%85%83%E7%B4%A0"><span class="nav-number">3.2.4.</span> <span class="nav-text">2.4 被遗忘的DOM元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">3.3.</span> <span class="nav-text">3.如何解决内存泄露</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://159357254680.github.io/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="闭包，垃圾回收和内存泄露 | blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          闭包，垃圾回收和内存泄露
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-02-18 16:58:10" itemprop="dateCreated datePublished" datetime="2025-02-18T16:58:10+08:00">2025-02-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-23 16:08:40" itemprop="dateModified" datetime="2025-02-23T16:08:40+08:00">2025-02-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="一-闭包"><a href="#一-闭包" class="headerlink" title="一 . 闭包"></a>一 . 闭包</h1><h2 id="1-什么是闭包："><a href="#1-什么是闭包：" class="headerlink" title="1.什么是闭包："></a>1.什么是闭包：</h2><p>​	什么是闭包？引用<strong>JS</strong>书中的定义，当一个函数能够记住并且访问其所在的作用域，即使这个函数是在作用域之外被执行的，这就是闭包。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> <span class="comment">// a 是一个被 a 创建的局部变量</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; <span class="comment">// b 是一个内部函数</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) <span class="comment">// 使用了父函数中声明的变量</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//1 这就是闭包</span></span><br></pre></td></tr></table></figure>
+
+<p>​	在a() 函数中声明了一个私有变量 a , b() 函数是 a() 函数内部的函数，此时 a 内部的所有局部变量，对 b 都是可见的，但是a()中的变量对于外部是不可见的，b 内部的局部变量，对 a 就是不可见的。这就是JS的”作用域链“。其中，a()在执行之后，将 b 返回，并赋值给了c ，通过c从外部访问了 a() 的内部变量a。</p>
+<p>​	闭包是一种保护私有变量的机制，它在函数执行时创建一个私有作用域，从而保护内部的私有变量不受外界干扰,同时允许外界访问内部的私有变量。</p>
+<p>​	直观地说，闭包就像是一个不会被销毁的栈环境。</p>
+<h2 id="2-闭包的优点："><a href="#2-闭包的优点：" class="headerlink" title="2.闭包的优点："></a>2.闭包的优点：</h2><p>​	从上面的例子可以注意到，a是a()中的一个私有变量，但是我们却在全局作用域中访问了函数的私有变量，从中可以看出了闭包的几个优点：</p>
+<ol>
+<li><strong>保护私有变量</strong></li>
+<li><strong>延长变量寿命</strong></li>
+<li><strong>实现变量共享</strong></li>
+</ol>
+<p>	</p>
+<p>为什么这么说呢？可以来看看接下来的几个例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="keyword">const</span> a = <span class="number">2</span> <span class="comment">// 在全局作用域中为a赋值为2</span></span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//最后结果仍然是1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	上述代码中，a是a（）中的一个私有变量，因此外部无法直接访问它。即使在全局声明了一个同名变量a，也无法影响到函数内部，a变量的值只能在函数内部被修改和访问，这样就保护了闭包中的私有变量。</p>
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 a还活着！</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	一般情况下，在函数<strong>fn</strong>执行完后，就应该连同它里面的变量一同被垃圾回收，但是在这个例子中，<strong>f1（）</strong>函数作为fn的返回值被赋值给了<strong>add</strong>，这时候相当于<strong>add&#x3D;function f1(){ … }<strong>，并且</strong>f1()<strong>内部引用着</strong>fn</strong>里的变量<strong>a</strong>，所以变量<strong>a</strong>无法被销毁，而变量n是每次被调用时新创建的，所以每次<strong>f1</strong>执行完后它就把属于自己的变量连同自己一起销毁，但是把<strong>a</strong>保留了下来，实现了延长变量寿命，但这又出现了一个新问题，后面再讲。</p>
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//1 我从外部访问了私有变量！</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	还是上面的例子，即使<strong>a</strong>是**a()**中的私有变量，但仍然从外部访问了它，这就是变量共享。</p>
+<hr>
+<h2 id="3-闭包的作用"><a href="#3-闭包的作用" class="headerlink" title="3. 闭包的作用"></a>3. 闭包的作用</h2><h4 id="3-1节流"><a href="#3-1节流" class="headerlink" title="3.1节流"></a>3.1节流</h4><p>​	<strong>节流</strong>是指限制函数的执行频率<strong>，即在一定时间间隔内</strong>最多只执行一次**，即使事件被多次触发。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">throttle</span>(<span class="params">fn, delay</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> lastTime = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> now = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">        <span class="keyword">if</span> (now - lastTime &gt;= delay) &#123;</span><br><span class="line">            fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">            lastTime = now; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> log = <span class="title function_">throttle</span>(<span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;我滚了&quot;</span>), <span class="number">1000</span>);</span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;scroll&quot;</span>, log);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-2-防抖"><a href="#3-2-防抖" class="headerlink" title="3.2 防抖"></a>3.2 防抖</h4><p>​	<strong>防抖</strong>是指在事件触发后，<strong>一定时间内不再触发</strong>，才执行函数。</p>
+<p>​	如果在等待时间内再次触发，则重新计时。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">debounce</span>(<span class="params">fn, delay</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> timer = <span class="literal">null</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">        &#125;, delay);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> input = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;input&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> handleInput = <span class="title function_">debounce</span>(<span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;搜索：&quot;</span> + event.<span class="property">target</span>.<span class="property">value</span>);</span><br><span class="line">&#125;, <span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">input.<span class="title function_">addEventListener</span>(<span class="string">&quot;input&quot;</span>, handleInput);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-3-函数柯里化"><a href="#3-3-函数柯里化" class="headerlink" title="3.3 函数柯里化"></a>3.3 函数柯里化</h4><p>​	<strong>柯里化 <strong>是指将一个</strong>多参数</strong>函数转换成多个<strong>单参数</strong>函数的调用链。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">curry</span>(<span class="params">fn</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> <span class="title function_">curried</span>(<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.<span class="property">length</span> &gt;= fn.<span class="property">length</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...nextArgs</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> curried.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args.<span class="title function_">concat</span>(nextArgs));</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">add</span>(<span class="params">a, b, c</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b + c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> curriedAdd = <span class="title function_">curry</span>(add);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>)); <span class="comment">// 6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>, <span class="number">2</span>)(<span class="number">3</span>)); <span class="comment">// 6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>)(<span class="number">2</span>, <span class="number">3</span>)); <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-4-模块化"><a href="#3-4-模块化" class="headerlink" title="3.4 模块化"></a>3.4 模块化</h4><p>​	<strong>模块化</strong>是指<strong>将代码拆分成独立的模块，每个模块负责不同的功能</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">CounterModule</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> count = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">increment</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            count++;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Count:&quot;</span>, count);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">decrement</span>: <span class="keyword">function</span> (<span class="params"></span>)&#123;</span><br><span class="line">            count--;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Count:&quot;</span>, count);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attr">reset</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Reset to 0&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">increment</span>(); <span class="comment">// Count: 1</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">increment</span>(); <span class="comment">// Count: 2</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">decrement</span>(); <span class="comment">// Count: 1</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">reset</span>(); <span class="comment">// Reset to 0</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>​	现在，再返回前面的问题，为什么fn()中的a被保留下来，而f1()中的n被销毁了呢？这就引出了JS的垃圾回收机制。</p>
+<h1 id="二-垃圾回收"><a href="#二-垃圾回收" class="headerlink" title="二 . 垃圾回收"></a>二 . 垃圾回收</h1><h2 id="1-什么是垃圾："><a href="#1-什么是垃圾：" class="headerlink" title="1. 什么是垃圾："></a>1. 什么是垃圾：</h2><p>​	什么是垃圾呢？垃圾是如何定义的呢？</p>
+<p>​	很简单，JS中的函数，变量，对象等都需要占用一定的内存，当这些东西不再被使用的时候，就变成了垃圾。</p>
+<p>垃圾可以分为以下几类：</p>
+<ol>
+<li><strong>已经调用完毕的函数作用域及其内部的值</strong></li>
+<li><strong>无法被访问到的值</strong></li>
+</ol>
+<p>​	正如之前所说，<strong>JS</strong>中的所有的变量都会占用内存，当这些变量变成垃圾的时候，如果不进行回收，内存就会被一直占用，随着程序的运行，垃圾也会越来越多，总有一刻，内存会被占满，程序也就无法运行了。</p>
+<hr>
+<h2 id="2-垃圾回收机制："><a href="#2-垃圾回收机制：" class="headerlink" title="2. 垃圾回收机制："></a>2. 垃圾回收机制：</h2><p>​	首先，根据JS的内存分配机制，基本数据类型保存在固定的占空间中，可以直接通过值进行访问，但是复杂数据类型的大小不固定，所以其会通过引用地址保存在栈空间，而引用的指向保存的值保存在堆空间，通过引用访问，比如函数，对象等。</p>
+<p>​	栈内存中的基本数据类型，可以直接通过操作系统来进行处理，但是堆内存中的复杂数据类型的值的大小不确定，这就需要JS的引擎通过垃圾回收机制进行处理。</p>
+<h3 id="2-1-可达性："><a href="#2-1-可达性：" class="headerlink" title="2.1 可达性："></a>2.1 可达性：</h3><p>​	在JS中，内存管理的主要概念是可达性，”可达性“值就是那些以某种方式可访问的值，他们被保证存储在内存中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> me = &#123;</span><br><span class="line">	<span class="attr">name</span>:<span class="string">&quot;奶龙&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	在这里，创建了一个全局变量me，它指向了一个对象{name:“奶龙”}，因此这个这个对象是可达的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> me = &#123;</span><br><span class="line">	<span class="attr">name</span>:<span class="string">&quot;奶龙&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">me = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+
+<p>​	此时，对象{name:“奶龙”}处于不可达的状态，由于无法访问它，垃圾回收器将回收这个数据并释放内存。</p>
+<h3 id="2-2-引用计数和标记清除："><a href="#2-2-引用计数和标记清除：" class="headerlink" title="2.2 引用计数和标记清除："></a>2.2 引用计数和标记清除：</h3><p>​	在浏览器的历史上，有两种垃圾回收的方法：</p>
+<ul>
+<li>标记清除</li>
+<li>引用计数</li>
+</ul>
+<h4 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h4><p>​	引用计数是一种几乎被淘汰的垃圾回收机制，它通过对每个复杂数据类型的变量进行计数，比如：</p>
+<ul>
+<li>当变量声明并赋值之后，值得引用数为1</li>
+<li>当同一个值被赋值给另一个变量时，引用数加1</li>
+<li>当保存该值引用的变量被其它值覆盖时，引用数减1</li>
+<li>当一个值的引用数变为0时，就表示无法再访问该值，此时垃圾回收机制就会将其清除并回收内存</li>
+</ul>
+<p>​	看起来很完美，但只是看起来而已，引用计数存在一个严重的缺陷：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">problem</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">const</span> objA = &#123;&#125;</span><br><span class="line">       <span class="keyword">const</span> objB = &#123;&#125;</span><br><span class="line">       objA.<span class="property">a</span> = objB</span><br><span class="line">       objB.<span class="property">b</span> = objA</span><br><span class="line">       </span><br><span class="line">       objA = <span class="literal">null</span></span><br><span class="line">       objB = <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	可以看到，虽然没有其他引用指向objA和objB之前分别指向的两个对象，但它们相互引用，导致它们的引用数永远不会为零，也就永远不会被回收了。因此，现代浏览器采用了另一种新的回收机制。</p>
+<h4 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h4><p>​	相对于引用计数，标记清除就简单的多了，无非就是打不打标记的问题，就跟二进制的0和1十分相似，具体步骤如下：</p>
+<ul>
+<li>垃圾收集器在运行时会给内存中的所有变量都加上一个标记，假设内存中所有对象都是垃圾，全标记为0</li>
+<li>然后从各个根对象开始遍历，把不是垃圾的节点改成1</li>
+<li>清理所有标记为0的垃圾，销毁并回收它们所占用的内存空间</li>
+<li>最后，把所有内存中对象标记修改为0，等待下一轮垃圾回收</li>
+</ul>
+<p>​	但是，标记清除算法有一个很大的缺点，就是在清除之后，剩余的对象内存位置是不变的，也会导致空闲内存空间是不连续的，出现了 <code>内存碎片</code>，并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表，这就牵扯出了内存分配的问题，这里不过多介绍。</p>
+<p>回过头来，再来解释上面的问题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 我的a还活着！</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong><code>fn</code> 执行</strong>：</p>
+<ul>
+<li>当调用 <code>fn()</code> 时，局部变量 <code>a</code> 被创建并赋值为 <code>1</code>。</li>
+<li>然后返回的是内部函数 <code>f1</code>，并且这个函数内部会访问外部的 <code>a</code> 变量。</li>
+</ul>
+<p><strong>闭包形成</strong>：</p>
+<ul>
+<li>函数 <code>f1</code> 是一个 <strong>闭包</strong>，它访问了 <code>fn</code> 中的 <code>a</code> 变量。因此，<code>a</code> 被保存在 <code>f1</code> 的作用域中。</li>
+<li>这意味着即使 <code>fn</code> 执行完毕，<code>fn</code> 中的 <code>a</code> 变量依然存在于 <code>f1</code> 的 <strong>闭包环境中</strong>，并不会被销毁。</li>
+</ul>
+<p>**调用 <code>add()</code>**：</p>
+<ul>
+<li><code>add</code> 是 <code>fn()</code> 的返回值，即 <code>f1</code> 函数。</li>
+<li>每次调用 <code>add()</code> 时，<code>f1</code> 执行并访问了闭包中的 <code>a</code> 变量。</li>
+<li>尽管 <code>fn</code> 执行完毕，<code>a</code> 变量的作用域并没有被销毁，因为 <code>f1</code>（闭包）仍然在访问它。<strong>闭包让 <code>a</code> 保持在内存中，直到闭包本身不再被引用。</strong></li>
+</ul>
+<p>省流：</p>
+<p><strong>根对象：</strong></p>
+<ul>
+<li><code>window</code></li>
+<li><code>add</code>（全局变量，指向 <code>f1</code>）</li>
+</ul>
+<p><strong>可达对象：</strong></p>
+<ul>
+<li><code>add</code> 指向 <code>f1</code></li>
+<li><code>f1</code> 通过闭包作用域 <strong>引用了 <code>a</code></strong></li>
+<li><code>a</code> 仍然可达</li>
+</ul>
+<hr>
+<h1 id="三-内存泄漏"><a href="#三-内存泄漏" class="headerlink" title="三. 内存泄漏"></a>三. 内存泄漏</h1><h2 id="1-什么是内存泄露"><a href="#1-什么是内存泄露" class="headerlink" title="1.什么是内存泄露"></a>1.什么是内存泄露</h2><p>​	在介绍闭包的时候，我们发现了一个问题，现在再来看看：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 我的a还活着！</span></span><br></pre></td></tr></table></figure>
+
+<p>​	由于我们使用了闭包，因此延长了局部变量a的寿命，使得我们能够在函数执行完毕时访问它，但这样也导致了a会一直存活，无法被回收，这就是内存泄露。</p>
+<p>​	<strong>内存泄漏（Memory Leak）是指程序在运行时无法释放不再使用的内存，导致内存逐渐耗尽，甚至造成程序崩溃或性能下降。</strong></p>
+<h2 id="2-怎样会引起内存泄露"><a href="#2-怎样会引起内存泄露" class="headerlink" title="2. 怎样会引起内存泄露"></a>2. 怎样会引起内存泄露</h2><h3 id="2-1-闭包"><a href="#2-1-闭包" class="headerlink" title="2.1 闭包"></a>2.1 闭包</h3><p>​	略</p>
+<h3 id="2-2-意外的全局变量"><a href="#2-2-意外的全局变量" class="headerlink" title="2.2 意外的全局变量"></a>2.2 意外的全局变量</h3><p>​	全局变量具有非常长的生命周期，一直到页面被关闭，它都会存活着，所以全局变量上的内存一直都不会被回收。</p>
+<h3 id="2-3-角落的定时器"><a href="#2-3-角落的定时器" class="headerlink" title="2.3 角落的定时器"></a>2.3 角落的定时器</h3><p>​	定时器是我们经常使用的一个功能，如果我们在某个页面使用了定时器，但在关闭定时器时没有清除定时器的话，定时器还是活着的。换句话说，定时器的生命周期并不挂靠在页面上，如果在当前页面的JS通过定时器注册了某个回调函数，而该回调函数又持有当前页面的某个变量或某个DOM元素，就会导致即使页面销毁，由于定时器持有该页面部分引用而造成页面无法正常回收，导致内存泄漏。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clearTimeoutExample</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;Large Object&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> timeoutId = <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;This will be cleared after 1 second.&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">clearTimeoutExample</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-被遗忘的DOM元素"><a href="#2-4-被遗忘的DOM元素" class="headerlink" title="2.4 被遗忘的DOM元素"></a>2.4 被遗忘的DOM元素</h3><p>​	DOM元素的生命周期是取决于是否可以挂载在DOM树上，当从DOM树上移除时，也就可以被销毁移除了。但是，如果某个DOM元素在JS中也持有它的引用时，那么它的生命周期就由JS和是否在DOM树上二者决定了，只有将两个地方都去清理才能正常回收它</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myElement&quot;</span>&gt;<span class="title class_">Hello</span>, <span class="title class_">World</span>!&lt;/div&gt;</span><br><span class="line">   <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;removeButton&quot;</span>&gt;</span>Remove Element<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">   </span><br><span class="line">   <span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       <span class="keyword">let</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myElement&quot;</span>);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;removeButton&quot;</span>).<span class="title function_">addEventListener</span>(<span class="string">&quot;click&quot;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">           <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">removeChild</span>(element);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">         </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       &#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">   </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​	上述代码中，即使我们从DOM树中移除了<code>#myElement</code> 元素，但<code>element</code> 变量仍然持有对 <code>#myElement</code> 的引用，导致内存泄露。</p>
+<h2 id="3-如何解决内存泄露"><a href="#3-如何解决内存泄露" class="headerlink" title="3.如何解决内存泄露"></a>3.如何解决内存泄露</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">big</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> bigData = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;big&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(bigData.<span class="property">length</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> createData = <span class="title function_">big</span>();</span><br><span class="line"><span class="comment">// 在不再需要时，手动解除引用</span></span><br><span class="line">createData = <span class="literal">null</span>;  <span class="comment">// 解除闭包对 largeData 的引用，允许垃圾回收</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//尽量使用局部变量而非全局变量</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clearTimeoutExample</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;Large Object&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> timeoutId = <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;This will be cleared after 1 second.&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 在不再需要时清除定时器</span></span><br><span class="line">    <span class="built_in">clearTimeout</span>(timeoutId);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">clearTimeoutExample</span>();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myElement&quot;</span>&gt;<span class="title class_">Hello</span>, <span class="title class_">World</span>!&lt;/div&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;removeButton&quot;</span>&gt;</span>Remove Element<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  </span><br><span class="line">  &lt;script&gt;</span><br><span class="line">      <span class="comment">// 在JS中持有对DOM元素的引用</span></span><br><span class="line">      <span class="keyword">let</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myElement&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 给按钮绑定事件监听器</span></span><br><span class="line">      <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;removeButton&quot;</span>).<span class="title function_">addEventListener</span>(<span class="string">&quot;click&quot;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">          <span class="comment">// 从DOM树中移除元素</span></span><br><span class="line">          <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">removeChild</span>(element);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 清除对元素的引用，允许垃圾回收</span></span><br><span class="line">          element = <span class="literal">null</span>;</span><br><span class="line">      &#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%97%A0/" rel="tag"># 无</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/21/%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE%E4%B8%8E%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/" rel="prev" title="作用域链与执行上下文">
+                  <i class="fa fa-angle-left"></i> 作用域链与执行上下文
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/17/http%E4%B8%8EWebSocket/" rel="next" title="http与WebSocket">
+                  http与WebSocket <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

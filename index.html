@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -134,6 +134,798 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/03/17/http%E4%B8%8EWebSocket/" class="post-title-link" itemprop="url">http与WebSocket</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-17 19:34:58" itemprop="dateCreated datePublished" datetime="2025-03-17T19:34:58+08:00">2025-03-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-03-23 13:02:23" itemprop="dateModified" datetime="2025-03-23T13:02:23+08:00">2025-03-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="1-http"><a href="#1-http" class="headerlink" title="1. http"></a>1. http</h1><h2 id="1-1-什么是http："><a href="#1-1-什么是http：" class="headerlink" title="1.1 什么是http："></a>1.1 什么是http：</h2><p>​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。</p>
+<p><strong>附</strong>：除了http，我们经常能够看见https。https不是http地复数，而是在http的基础上进行了加密工作，具体在后文进行介绍。</p>
+<h2 id="1-2-http如何工作："><a href="#1-2-http如何工作：" class="headerlink" title="1.2 http如何工作："></a>1.2 http如何工作：</h2><p>​	在浏览器的上方，有一个地址栏。如果我们在其中输入一个URL,浏览器就会给对应的服务器发送一个http请求，当服务器收到这个请求之后，就会进行处理，然后返回一个http响应。那么，具体的过程是怎样的呢？</p>
+<ol>
+<li><strong>建立连接</strong>：客户端（如Web浏览器）与服务器建立连接。这个连接是通过TCP协议完成的，期间经过了三次握手。HTTP协议是短连接的，每次请求都需要建立一个新的连接。（http&#x2F;1.1后又引入了持久连接Keep-Alive，通过复用TCP连接来发送多个http请求和接受多个响应）</li>
+<li><strong>发送请求</strong>：客户端向服务器发送请求。请求的格式包括请求行、请求头和请求体。请求行包含请求方法（如GET、POST）、请求的URL和HTTP版本。请求头包含一些附加信息，如主机、用户代理等。请求体则包含实际的数据。</li>
+<li><strong>服务器响应</strong>：服务器接收到请求后，进行处理并返回响应。响应的格式包括状态行、响应头和响应体。状态行包含HTTP版本、状态码和状态描述。响应头包含一些附加信息，如服务器类型、内容类型等。响应体则包含实际的数据，如HTML文档。</li>
+<li><strong>关闭连接</strong>：服务器发送完响应后，关闭连接。HTTP是无状态的协议，这意味着每次请求和响应都是独立的，服务器不会保留连接的状态信息。</li>
+</ol>
+<p>具体如下：</p>
+<p>​	<img src="https://th.bing.com/th/id/OIP.YZt-rVLQzDPDZNIff5QXlAHaE6?w=242&h=180&c=7&r=0&o=5&dpr=2&pid=1.7" alt="示例图片"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET /index.html HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>GET /index.html HTTP/1.1</code>：请求方法+资源路径+HTTP 版本</li>
+<li><code>Host: www.example.com</code>：目标服务器地址</li>
+<li><code>User-Agent: Mozilla/5.0 ...</code>：客户端类型（浏览器、操作系统等）</li>
+<li><code>Accept: text/html,...</code>：客户端可接受的数据类型</li>
+<li><code>Accept-Encoding: gzip,...</code>：支持的压缩格式</li>
+<li><code>Connection: keep-alive</code>：连接方式，是否保持连接</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Wed, 19 Mar 2025 12:00:00 GMT</span><br><span class="line">Server: Apache/2.4.41 (Ubuntu)</span><br><span class="line">Content-Type: text/html; charset=UTF-8</span><br><span class="line">Content-Length: 1024</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;head&gt;&lt;title&gt;示例&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">  &lt;body&gt;&lt;h1&gt;姜圣！&lt;/h1&gt;&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>HTTP/1.1 200 OK</code>：HTTP 版本 + 状态码 + 状态信息</li>
+<li><code>Date: Wed, 19 Mar 2025 12:00:00 GMT</code>：响应时间</li>
+<li><code>Server: Apache/2.4.41 (Ubuntu)</code>：服务器信息</li>
+<li><code>Content-Length: 1024</code>：响应体大小（字节数）</li>
+<li><code>Connection: keep-alive</code>：连接方式，支持长连接</li>
+<li><code>响应体</code>：<code>&lt;html&gt;...&lt;/html&gt;</code> 是服务器返回的 HTML 页面</li>
+</ul>
+<p>**短连接：HTTP&#x2F;1.0 及默认情况，请求完成后关闭连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<p><strong>长连接</strong>：HTTP&#x2F;1.1 及以上默认启用长连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>省流就是：<strong>一发一收，一问一答</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/02dac5e6e5044a8d9a1e663ec55d8abe.png" alt="示例图片"></p>
+<p>当然，在http&#x2F;2中，还可以实现其他的模式：</p>
+<ul>
+<li><h6 id="一发多收（一个请求，多个响应）"><a href="#一发多收（一个请求，多个响应）" class="headerlink" title="一发多收（一个请求，多个响应）"></a><strong>一发多收（一个请求，多个响应）</strong></h6></li>
+<li><h6 id="多发一收（多个请求，一个响应）"><a href="#多发一收（多个请求，一个响应）" class="headerlink" title="多发一收（多个请求，一个响应）"></a><strong>多发一收（多个请求，一个响应）</strong></h6></li>
+<li><h6 id="多发多收（多个请求，多个响应）"><a href="#多发多收（多个请求，多个响应）" class="headerlink" title="多发多收（多个请求，多个响应）"></a><strong>多发多收（多个请求，多个响应）</strong></h6></li>
+</ul>
+<p>当然都是后话了，等我下次再讲（又可以水一期分享了😋）</p>
+<h2 id="1-3-http的方法："><a href="#1-3-http的方法：" class="headerlink" title="1.3 http的方法："></a>1.3 http的方法：</h2><h3 id="1-GET"><a href="#1-GET" class="headerlink" title="1. GET"></a>1. <strong>GET</strong></h3><ul>
+<li><p><strong>作用</strong>：请求指定的资源。GET请求通常用于获取数据，而不会对资源产生副作用。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>请求的参数附加在URL中（查询字符串）。</li>
+<li>可以被缓存。</li>
+<li>不应修改服务器上的资源。</li>
+<li>幂等性</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /index.html HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>获取网页内容。</li>
+<li>查询数据库记录。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-POST"><a href="#2-POST" class="headerlink" title="2. POST"></a>2. <strong>POST</strong></h3><ul>
+<li><p><strong>作用</strong>：向服务器提交数据，通常用于创建新资源或触发服务器上的处理操作。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>请求的参数包含在请求体中。</li>
+<li>不会被缓存。</li>
+<li>可能会修改服务器上的资源。</li>
+<li>不具有幂等性。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST /submit-form HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line">username=🫚&amp;password=123456</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>提交表单数据。</li>
+<li>上传文件。</li>
+<li>创建新资源（如用户注册）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-PUT"><a href="#3-PUT" class="headerlink" title="3. PUT"></a>3. <strong>PUT</strong></h3><ul>
+<li><p><strong>作用</strong>：更新指定资源。如果资源不存在，则创建新资源。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>请求的参数包含在请求体中。</li>
+<li>幂等性。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT /users/123 HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">Content-Type: application/json</span><br><span class="line"></span><br><span class="line">&#123;&quot;name&quot;: &quot;🦌🐟⚽&quot;, &quot;password&quot;: 159357&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>更新用户信息。</li>
+<li>替换现有资源。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-DELETE"><a href="#4-DELETE" class="headerlink" title="4. DELETE"></a>4. <strong>DELETE</strong></h3><ul>
+<li><p><strong>作用</strong>：删除指定的资源。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>幂等性。</li>
+<li>请求通常没有请求体。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DELETE /users/123 HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>删除用户。</li>
+<li>删除文件。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="5-HEAD"><a href="#5-HEAD" class="headerlink" title="5. HEAD"></a>5. <strong>HEAD</strong></h3><ul>
+<li><p><strong>作用</strong>：请求资源的元信息，而不返回实际内容。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>响应中没有响应体。</li>
+<li>可以用于检查资源是否存在或获取资源的元信息（如大小、类型）。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HEAD /index.html HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>检查资源是否更新（通过<code>Last-Modified</code>或<code>ETag</code>）。</li>
+<li>获取资源的大小和类型。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="6-OPTIONS"><a href="#6-OPTIONS" class="headerlink" title="6. OPTIONS"></a>6. <strong>OPTIONS</strong></h3><ul>
+<li><p><strong>作用</strong>：获取服务器支持的HTTP方法或其他选项。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>响应中包含<code>Allow</code>头部，列出支持的HTTP方法。</li>
+<li>幂等性</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">OPTIONS /index.html HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>检查服务器支持的请求方法。</li>
+<li>跨域请求时，用于预检请求（Preflight Request）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="7-TRACE"><a href="#7-TRACE" class="headerlink" title="7. TRACE"></a>7. <strong>TRACE</strong></h3><ul>
+<li><p><strong>作用</strong>：用于诊断或测试，服务器会将收到的请求原样返回,以便客户端检查请求是否被篡改。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>响应中包含客户端发送的请求信息。</li>
+<li>通常用于调试。</li>
+<li>幂等性</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TRACE /index.html HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>检查请求在传输过程中是否被修改。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="8-CONNECT"><a href="#8-CONNECT" class="headerlink" title="8. CONNECT"></a>8. <strong>CONNECT</strong></h3><ul>
+<li><p><strong>作用</strong>：用于建立与服务器的隧道连接，通常用于HTTPS代理。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>请求中包含目标服务器的地址和端口。</li>
+<li>用于客户端通过代理服务器与目标服务器建立连接。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CONNECT www.example2.com:443 HTTP/1.1</span><br><span class="line">Host: www.example1.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>常见用途</strong>：</p>
+<ul>
+<li>通过代理服务器建立HTTPS连接。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>附图如下：</p>
+<p><img src="https://img2020.cnblogs.com/blog/1430250/202010/1430250-20201007103219405-319114234.png" alt="示例图片"></p>
+<p>​	<strong>幂等性：</strong>在忽略错误或过期问题的情况下，多次相同请求的副作用与一次请求的副作用相同。总结就是多次执行后效果相同，不存在副作用。而post每次请求都回创建新的资源，因此是不幂等的。</p>
+<hr>
+<h2 id="1-4-http的状态码"><a href="#1-4-http的状态码" class="headerlink" title="1.4 http的状态码"></a>1.4 http的状态码</h2><ul>
+<li><p><strong>1xx（信息性状态码）</strong>：表示请求已被接收，继续处理。</p>
+</li>
+<li><p><strong>2xx（成功）</strong>：</p>
+<ul>
+<li><strong>200 OK</strong>：请求成功。</li>
+<li><strong>201 Created</strong>：资源已创建。</li>
+<li><strong>204 No Content</strong>：成功但无响应体。</li>
+<li>**206 Partial Content :**范围请求成功</li>
+</ul>
+</li>
+<li><p><strong>3xx（重定向）</strong>：</p>
+<ul>
+<li><strong>301 Moved Permanently</strong>：永久重定向（资源被分配了新的URI)。</li>
+<li><strong>302 Found</strong>：临时重定向（资源被分配了新的URI，但是未来还有可能改变）。</li>
+<li><strong>304 Not Modified</strong>：允许访问资源，但未满足条件。</li>
+</ul>
+</li>
+<li><p><strong>4xx（客户端错误）</strong>：</p>
+<ul>
+<li><strong>400 Bad Request</strong>：请求语法错误。</li>
+<li><strong>401 Unauthorized</strong>：未认证。</li>
+<li><strong>403 Forbidden</strong>：无权限。</li>
+<li><strong>404 Not Found</strong>：资源不存在。</li>
+</ul>
+</li>
+<li><p><strong>5xx（服务器错误）</strong>：</p>
+<ul>
+<li><strong>500 Internal Server Error</strong>：服务器内部错误。</li>
+<li><strong>502 Bad Gateway</strong>：网关错误。</li>
+<li><strong>503 Service Unavailable</strong>：服务不可用（如武器超负载或正在维护）。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/183f18213593408bb7c612a2175ea749.png#pic_center" alt="示例图片"></p>
+</li>
+</ul>
+<hr>
+<h2 id="1-5-http的不足："><a href="#1-5-http的不足：" class="headerlink" title="1.5 http的不足："></a>1.5 http的不足：</h2><h3 id="1-无状态性"><a href="#1-无状态性" class="headerlink" title="1.无状态性"></a>1.<strong>无状态性</strong></h3><ul>
+<li><p><strong>问题</strong>：</p>
+<p>​	HTTP是无状态协议，服务器不会记住客户端的状态。每次请求都是独立的，服务器不会保留之前的请求信息。</p>
+</li>
+<li><p><strong>影响</strong>：</p>
+<ul>
+<li>增加了开发和维护的复杂性。</li>
+<li>需要额外的机制（如Cookie、Session，补充在附录）来管理状态。</li>
+</ul>
+</li>
+<li><p><strong>改进</strong>：</p>
+<ul>
+<li>使用Cookie或Session来管理状态。</li>
+<li>使用Token进行无状态认证。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-安全问题"><a href="#2-安全问题" class="headerlink" title="2.安全问题"></a>2.安全问题</h3><p><strong>问题：</strong></p>
+<ul>
+<li>通信采用明文，内容可能被窃听</li>
+<li>不验证通信双方的身份，可能遭遇伪装</li>
+<li>无法验证明文的完整性，有可能遭到篡改</li>
+</ul>
+<p><strong>改进</strong>：</p>
+<p>​	诞生了https，使用https（http over SSL&#x2F;TLS）加密传输数据。</p>
+<p>（https见附录）</p>
+<hr>
+<h3 id="3-头部冗余"><a href="#3-头部冗余" class="headerlink" title="3. 头部冗余"></a>3. <strong>头部冗余</strong></h3><p><strong>问题</strong>：</p>
+<p>​	HTTP请求和响应的头部信息是文本格式的，且每次请求都会发送完整的头部信息，导致冗余。</p>
+<p><strong>改进</strong>：</p>
+<p>​	http&#x2F;2引入了头部压缩（HPACK），减少了头部信息的冗余。</p>
+<hr>
+<h3 id="4-不支持服务器推送"><a href="#4-不支持服务器推送" class="headerlink" title="4. 不支持服务器推送"></a>4. <strong>不支持服务器推送</strong></h3><p><strong>问题</strong>：</p>
+<p>​	HTTP&#x2F;1.x不支持服务器主动推送数据，客户端必须通过轮询或长轮询来获取更新，导致实时性差，增加了客户端的负担。</p>
+<p><strong>改进</strong>：</p>
+<p>​	HTTP&#x2F;2支持服务器推送（Server Push），服务器可以主动向客户端推送资源。</p>
+<p><strong>附：</strong><br>        轮询：客户端每隔一段时间向服务器发送http请求，服务器在收到请求后不论是否有数据更新，都直接	进行响应。</p>
+<p>​		长轮询：客户端向服务器发起请求，如果服务器没有数据更新，就把请求挂住，直到服务端的数据发生	了更新，或者超时便会返回。</p>
+<hr>
+<h3 id="5-性能问题"><a href="#5-性能问题" class="headerlink" title="5. 性能问题"></a>5. <strong>性能问题</strong></h3><p><strong>问题</strong>：</p>
+<p>​	<strong>短连接</strong>：HTTP&#x2F;1.0默认是短连接的，每次请求都需要重新建立和关闭连接，增加了延迟和资源消耗。</p>
+<p>​	<strong>队头阻塞</strong>：HTTP&#x2F;1.1虽然支持持久连接，但仍然存在队头阻塞问题（一个请求的延迟会影响后续请求）。</p>
+<p><strong>改进</strong>：</p>
+<p>​	使用HTTP&#x2F;2的多路复用技术，允许在同一个连接上同时发送多个请求和接收多个响应。</p>
+<p>​	使用HTTP&#x2F;3的QUIC协议，进一步优化性能。</p>
+<hr>
+<p>​	除了上面这么多，http还有很多不足，比如缺乏优先级，不支持二进制传输，存在跨域限制等问题。</p>
+<p>为了解决http的部分不足，便引入了新的协议，其名为WebSocket。</p>
+<hr>
+<h1 id="2-WebSocket"><a href="#2-WebSocket" class="headerlink" title="2. WebSocket"></a>2. WebSocket</h1><h2 id="2-1-WebSocket"><a href="#2-1-WebSocket" class="headerlink" title="2.1 WebSocket"></a>2.1 WebSocket</h2><p>​	<strong>WebSocket</strong> 是一种在单个TCP连接上进行<strong>全双工通信</strong>的协议，允许客户端和服务器之间进行实时、双向的数据传输。它是HTML5规范的一部分，旨在解决HTTP协议在实时通信中的局限性。</p>
+<p><strong>附：</strong>数据只能单向传送为<strong>单工</strong>；<br>    数据能双向传送但不能同时双向传送称为<strong>半双工</strong>；<br>    数据能够同时双向传送则称为<strong>全双工</strong>。</p>
+<h2 id="2-2-WebSocket的优点"><a href="#2-2-WebSocket的优点" class="headerlink" title="2.2 WebSocket的优点"></a>2.2 WebSocket的优点</h2><p><strong>WebSocket的优势包括：</strong></p>
+<ul>
+<li><strong>实时性：</strong> 由于WebSocket的持久化连接，它可以实现实时的数据传输，避免了Web应用程序需要不断地发送请求以获取最新数据的情况。</li>
+<li><strong>双向通信：</strong> WebSocket协议支持双向通信，这意味着服务器可以主动向客户端发送数据，而不需要客户端发送请求。</li>
+<li><strong>减少网络负载：</strong> 由于WebSocket的持久化连接，它可以减少HTTP请求的数量，从而减少了网络负载。</li>
+</ul>
+<h2 id="2-3WebSocket的工作过程"><a href="#2-3WebSocket的工作过程" class="headerlink" title="2.3WebSocket的工作过程"></a>2.3WebSocket的工作过程</h2><p>​	WebSocket 生命周期描述了 WebSocket 连接从创建到关闭的过程。一个 WebSocket 连接包含以下四个主要阶段：</p>
+<h4 id="连接建立阶段："><a href="#连接建立阶段：" class="headerlink" title="连接建立阶段："></a><strong>连接建立阶段：</strong></h4><p>​	在连接建立阶段，客户端会基于http协议向客户端发送一个特殊的http（get）请求，之所以特殊，是因为其请求头包含了一些特殊的字段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET /chat HTTP/1.1</span><br><span class="line">Host: example.com</span><br><span class="line">Upgrade: websocket</span><br><span class="line">Connection: Upgrade</span><br><span class="line">Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</span><br><span class="line">Sec-WebSocket-Version: 13</span><br><span class="line">Origin: http://example.com</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Upgrade:websocket</code>   表示客户端希望协议升级为WebSocket</li>
+<li><code>Connection:Upgrade</code>  进一步确认客户端请求协议升级的意图</li>
+<li><code>Sec-WebSocket-Key</code> 一个由客户端生成的Base64编码的随机密钥，用于安全认证</li>
+<li><code>Sec-WebSocket-Version</code> 用于指定客户端支持的WebSocket版本</li>
+<li><code>Origin</code>：指定请求的来源，服务器用于检查请求是否来自合法的域。</li>
+</ul>
+<p>​	服务器接受到请求后，会对头部字段进行验证。如果验证通过，就会返回一个带有101 Switching Protocols的http响应，表示同意协议升级。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 101 Switching Protocols</span><br><span class="line"></span><br><span class="line">Upgrade: websocket</span><br><span class="line"></span><br><span class="line">Connection: Upgrade</span><br><span class="line"></span><br><span class="line">Sec-WebSocket-Accept: x3JJHMbDL1EzLkh9tC9r0L4BvC6iXgkzB3wIFfEKf4k=</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>101 Switching Protocols</code>：表示服务器同意将协议升级。</li>
+<li><code>Sec-WebSocket-Accept</code>：服务器通过 <code>Sec-WebSocket-Key</code> 和一个特定的算法计算出一个值并返回，这个值是用来验证客户端发起的握手是否合法。</li>
+</ul>
+<h4 id="连接开放阶段："><a href="#连接开放阶段：" class="headerlink" title="连接开放阶段："></a><strong>连接开放阶段：</strong></h4><p>​	连接建立后，客户端和服务端便可以通过WebSocket进行双向的数据传输。数据以帧（就是数据链路层的那个）的形式进行传输。帧有许多种类型，比如文本帧（传输文本数据），二进制帧（传输二进制数据，比如图片，音频等），ping帧（用于心跳检测），关闭帧（用于关闭连接）。</p>
+<h4 id="连接关闭阶段："><a href="#连接关闭阶段：" class="headerlink" title="连接关闭阶段："></a><strong>连接关闭阶段：</strong></h4><p>​	如果此时客户端或者服务端需要关闭一个WebSocket连接，便会发送一个关闭帧。关闭帧包含一个状态码和可选的关闭原因，用于对方关闭连接的原因。另一方收到关闭帧后，会响应一个关闭帧，并关闭连接。这样的关闭方式可以保证连接正常终止，避免数据丢失或连接异常。</p>
+<h4 id="连接关闭完成阶段："><a href="#连接关闭完成阶段：" class="headerlink" title="连接关闭完成阶段："></a><strong>连接关闭完成阶段：</strong></h4><p>​	 在这个阶段，WebSocket 连接已经完全关闭。客户端和服务器之间的任何交互都将无效。</p>
+<p>如图：</p>
+<p><img src="https://tse3-mm.cn.bing.net/th/id/OIP-C.zVPHvJOfM7m8jlks8SFpHwAAAA?rs=1&pid=ImgDetMain" alt="示例图片"></p>
+<p>引用自伟大的🫚圣：</p>
+<p><a target="_blank" rel="noopener" href="https://vcnay0rphntt.feishu.cn/wiki/DUmLwwac3ipERmkrwjVckSQQn8d?fromScene=spaceOverview">‍‬‌‌﻿⁠﻿‍﻿⁠﻿﻿‌‌‌‍⁠﻿﻿⁠⁠⁠‍‍‌‌‍﻿﻿‌2-8 WebSocket的底层逻辑 - 飞书云文档</a></p>
+<h2 id="2-4-WebSocket的API"><a href="#2-4-WebSocket的API" class="headerlink" title="2.4 WebSocket的API"></a>2.4 WebSocket的API</h2><p>​	WebSocket API 是用于在 Web 应用程序中创建和管理 WebSocket 连接的接口集合。WebSocket API 由浏览器原生支持，无需使用额外的 JavaScript 库或框架，可以直接在 JavaScript 中使用。</p>
+<p>下面是一些常用的 WebSocket API：</p>
+<p>​	<strong>WebSocket 构造函数：</strong> WebSocket 构造函数用于创建 WebSocket 对象。它接受一个 URL 作为参数，表示要连接的 WebSocket 服务器的地址。例如：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> ws = <span class="keyword">new</span> WebSocket(<span class="string">&#x27;ws://example.com/ws&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>WebSocket.send() 方法：</strong> <code>WebSocket.send()</code> 方法用于向服务器发送数据。它接受一个参数，表示要发送的数据。数据可以是字符串、Blob 对象或 ArrayBuffer 对象（常用于处理二进制）。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ws.send(&#x27;Hello, server!&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>WebSocket.onopen 事件：</strong> <code>WebSocket.onopen</code> 事件在 WebSocket 连接成功建立时触发。例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ws.<span class="property">onopen</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;WebSocket 连接已经建立。&#x27;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>WebSocket.onmessage 事件：</strong> <code>WebSocket.onmessage</code> 事件在接收到服务器发送的消息时触发。它的 event 对象包含一个 data 属性，表示接收到的数据。例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ws.<span class="property">onmessage</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;收到服务器消息：&#x27;</span>, event.<span class="property">data</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>WebSocket.onerror 事件：</strong> <code>WebSocket.onerror</code> 事件在 WebSocket 连接出现错误时触发。例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ws.<span class="property">onerror</span> = <span class="keyword">function</span>(<span class="params">event</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;WebSocket 连接出现错误：&#x27;</span>, event);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>WebSocket.onclose 事件：</strong> <code>WebSocket.onclose</code> 事件在 WebSocket 连接被关闭时触发。例如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ws.onclose = function() &#123;</span><br><span class="line">  console.log(&#x27;WebSocket 连接已经关闭。&#x27;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>以上是一些常用的 WebSocket API。</p>
+<h2 id="2-5-WebSocket的不足"><a href="#2-5-WebSocket的不足" class="headerlink" title="2.5 WebSocket的不足"></a>2.5 WebSocket的不足</h2><ul>
+<li><strong>需要浏览器和服务器都支持：</strong> WebSocket是一种相对新的技术，需要浏览器和服务器都支持。一些旧的浏览器和服务器可能不支持WebSocket。</li>
+<li><strong>需要额外的开销：</strong> WebSocket需要在服务器上维护长时间的连接，这需要额外的开销，包括内存和CPU。</li>
+<li><strong>安全问题：</strong> 由于WebSocket允许服务器主动向客户端发送数据，可能会存在安全问题。服务器必须保证只向合法的客户端发送数据。</li>
+</ul>
+<h2 id="2-6-WebSokcet的应用场景"><a href="#2-6-WebSokcet的应用场景" class="headerlink" title="2.6 WebSokcet的应用场景"></a>2.6 WebSokcet的应用场景</h2><ul>
+<li>游戏应用程序</li>
+<li>聊天应用程序</li>
+<li>实时股票、外汇、加密货币行情</li>
+<li>在线协作编辑</li>
+</ul>
+<h1 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h1><h2 id="Cookie，Session和Token："><a href="#Cookie，Session和Token：" class="headerlink" title="Cookie，Session和Token："></a>Cookie，Session和Token：</h2><h3 id="关于Cookie："><a href="#关于Cookie：" class="headerlink" title="关于Cookie："></a>关于Cookie：</h3><p>​	<strong>Cookie 是存储在客户端浏览器中的小型文本数据</strong>，用于在 HTTP 请求之间保持用户状态。由于 HTTP 协议是无状态的，每次请求都是独立的，服务器无法记住客户端的状态，而 Cookie 可以帮助服务器跟踪用户。每个 Cookie 不能超过 <strong>4KB</strong>，一个站点最多可存储 <strong>300 个 Cookie</strong>，单个域名最多 <strong>20 个 Cookie</strong>。</p>
+<p><strong>附：</strong>JS能够通过document.cookie来访问cookie，从而进行身份冒充访问服务器，但是我们可以通过在Set-Cookie响应头设置HttpOnly来禁止documnet.cookie访问cookie。</p>
+<p>​	当用户访问网站时，服务器会在http的响应头中通过Set-Cookie设置cookie，客户端收到后，会将其存储到本地，之后，每次用户请求该网站，浏览器都会自动在请求头中携带cookie，服务器也就可以通过cookie来判断身份。</p>
+<h3 id="关于Session："><a href="#关于Session：" class="headerlink" title="关于Session："></a>关于Session：</h3><p>​	<strong>Session 是存储在服务器端的用户会话数据</strong>，用于记录用户的状态。由于 Cookie 存储在客户端，容易被篡改，而 Session 存储在服务器端，相对更安全。</p>
+<p>​	当用户访问服务器时，服务器创建一个 Session，并生成一个 session_id，然后，服务器返回session_id，并让客户端存储（通常存储在 Cookie），客户端在后续请求时携带 session_id，服务器便会通过session_id来验证身份。</p>
+<h3 id="关于Token："><a href="#关于Token：" class="headerlink" title="关于Token："></a>关于Token：</h3><p>​	<strong>Token是一种身份验证机制，基于无状态（Stateless）认证</strong>，不同于 Session，它不需要服务器存储用户信息，而是通过签名机制来验证数据的完整性，<strong>JWT（JSON Web Token）</strong> 是一种常见的 token 格式。</p>
+<p>​	用户登录时，服务器会生成token返回给客户端，客户端可以来存储这个token（比如localStorage.setItem()），后续每次请求时，客户端可以在Authorization中携带token来让服务器验证，如果有效，解析用户信息，否则拒绝请求</p>
+<p><strong>附：</strong></p>
+<p>​	单一token存在一些问题，比如无法安全地延长登陆状态，要么强制用户重新登录，要么一直有效。如果是前者，对于用户体验不太好；如果是后者，一旦token泄露，攻击者可以长期使用。</p>
+<p>​	因此，现在大多采用长短token机制。</p>
+<p>长短token分为短期token和长token：</p>
+<ul>
+<li><p>短token有效期较短，通常用于身份验证和授权操作等敏感操作。由于其生命周期较短，即使被盗用，利用时间也有限，从而降低了安全风险。</p>
+</li>
+<li><p>长token有效期较长，通常用于用户在一段时间内保持登录状态，避免频繁登录。即使其生命周期较长，但由于不直接进行敏感操作，安全风险较低。</p>
+</li>
+</ul>
+<p>​	用户登录时，服务端会生成一个长token和短token给用户，用户请求资源时，短token用于验证身份。如果短token过期，用户可以通过长token来请求一个新的短token，而无需重新登录。</p>
+<h3 id="区别："><a href="#区别：" class="headerlink" title="区别："></a>区别：</h3><p>​	Cookie-Session适用于传统的Web应用，前端代码和后端代码在同一个服务器，浏览器直接从后端加载页面，浏览器会自动携带Cookie或Session_id，因为前端和后端是同一个域名，因此通常不支持跨域。</p>
+<p>​	Token适用于前后端分离的项目，前端和后端分开，各自运行在独立的服务器，前端通过Ajax&#x2F;Fetch请求后端API，此时存在跨域，浏览器不会自动携带Cookie或Session_id,因此适用Token认证。</p>
+<h2 id="https："><a href="#https：" class="headerlink" title="https："></a>https：</h2><h3 id="什么是https："><a href="#什么是https：" class="headerlink" title="什么是https："></a>什么是https：</h3><p>​	https，即超文本安全传输协议，它在HTTP的基础上增加了加密和认证机制，以保护数据的机密性、完整性和真实性。</p>
+<p>​	相较于http，https通过TLS修正了http存在的安全问题：</p>
+<h3 id="1-加密传输"><a href="#1-加密传输" class="headerlink" title="1. 加密传输"></a>1. <strong>加密传输</strong></h3><ul>
+<li><strong>HTTP</strong>：数据以明文形式传输，容易被窃听或篡改。</li>
+<li><strong>HTTPS</strong>：通过SSL&#x2F;TLS协议对数据进行加密，确保传输过程中的安全性。</li>
+</ul>
+<h4 id="加密机制："><a href="#加密机制：" class="headerlink" title="加密机制："></a>加密机制：</h4><h5 id="共享密钥加密："><a href="#共享密钥加密：" class="headerlink" title="共享密钥加密："></a>共享密钥加密：</h5><p>​	加密和解密共用同一个密钥的方式叫做共享密钥加密，也叫做对称密钥加密。在加密时，用户使用一把密钥进行加密，之后将密钥和加密后的数据发送给另一方，用于解密。但问题又来了，任何人只要有密钥就能解密，如果我的通信被监听，密钥不就落入他人之手了吗？所以传输时还得设法安全保管密钥。</p>
+<h5 id="公开密钥加密："><a href="#公开密钥加密：" class="headerlink" title="公开密钥加密："></a>公开密钥加密：</h5><p>​	两名用户各有两把钥匙，一把用于加密，是公开的；一把用于解密，是私密的。在加密时，我可以使用对方公开的钥匙加密，然后发送给对方，对方使用自己私密的密钥进行解密，从而保证通信的安全性。但是，公开密钥加密在传输时由于非对称计算较为复杂，导致效率不如前者，不适合传输大量数据。</p>
+<h5 id="混合密钥加密："><a href="#混合密钥加密：" class="headerlink" title="混合密钥加密："></a>混合密钥加密：</h5><p>​	顾名思义，融合了前两种方法。具体过程是使用公开钥匙加密安全地交换在共享密钥中要使用的密钥，然后使用共享密钥加密的方式进行通信。</p>
+<hr>
+<h3 id="2-数据完整性"><a href="#2-数据完整性" class="headerlink" title="2. 数据完整性"></a>2. <strong>数据完整性</strong></h3><ul>
+<li><strong>HTTP</strong>：数据在传输过程中可能被篡改，无法保证完整性。</li>
+<li><strong>HTTPS</strong>：通过<strong>消息认证码（MAC）</strong>或<strong>数字签名</strong>确保数据的完整性，防止数据被篡改。</li>
+</ul>
+<h4 id="完整性保护："><a href="#完整性保护：" class="headerlink" title="完整性保护："></a>完整性保护：</h4><h5 id="消息认证码（MAC）"><a href="#消息认证码（MAC）" class="headerlink" title="消息认证码（MAC）"></a>消息认证码（MAC）</h5><p>​	MAC用于验证数据完整性和真实性，确保数据在传输过程中没有被篡改，而且来自可信的发送方。其原理用到了上面的密钥。</p>
+<p>​	发送方和接受方共享一个密钥。生成时，发送方使用密钥和哈希算法对数据计算MAC，然后把数据和MAC一起发给接收方，接收方收到数据后，使用相同的密钥和哈希算法计算MAC，如果相同，则数据完整且来自可信的发送方；如果不同，则数据可能被篡改或来自不可信的发送方。</p>
+<h5 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h5><p>​	数字签名和MAC大致相同，区别在于数字签名使用的是非对称的公开密钥加密。</p>
+<hr>
+<h3 id="3-身份认证"><a href="#3-身份认证" class="headerlink" title="3. 身份认证"></a>3. <strong>身份认证</strong></h3><ul>
+<li><strong>HTTP</strong>：无法验证服务器的身份，可能存在中间人攻击。</li>
+<li><strong>HTTPS</strong>：通过<strong>数字证书</strong>验证服务器的身份，确保客户端与真实的服务器通信。</li>
+</ul>
+<h4 id="数字证书："><a href="#数字证书：" class="headerlink" title="数字证书："></a>数字证书：</h4><p>​	数字证书是身份认证的核心，它包含了服务器的身份信息和公钥，并由可信的证书颁发机构（CA）签名。</p>
+<h5 id="证书颁发机构（CA）"><a href="#证书颁发机构（CA）" class="headerlink" title="证书颁发机构（CA）"></a>证书颁发机构（CA）</h5><p>​	证书颁发机构（CA）是受信任的第三方机构，负责验证服务器的身份并颁发数字证书。</p>
+<h5 id="数字证书内容"><a href="#数字证书内容" class="headerlink" title="数字证书内容"></a>数字证书内容</h5><p>​	数字证书通常包含以下信息：</p>
+<ul>
+<li><strong>服务器的公钥</strong>：用于加密通信。</li>
+<li><strong>服务器的域名</strong>：证书绑定的域名（如 <code>www.example.com</code>）。</li>
+<li><strong>证书的有效期</strong>：证书的生效日期和过期日期。</li>
+<li><strong>颁发机构的信息</strong>：CA 的名称和标识。</li>
+<li><strong>颁发机构的数字签名</strong>：CA 对证书内容的签名，用于验证证书的真实性。</li>
+</ul>
+<h5 id="证书验证流程"><a href="#证书验证流程" class="headerlink" title="证书验证流程"></a><strong>证书验证流程</strong></h5><p>​	首先，服务器在TLS&#x2F;SSL 握手过程中将自己的数字证书发送给客户端。</p>
+<p>​	然后，客户端使用 CA 的公钥解密证书中的签名，得到证书的哈希值。</p>
+<p>​		    客户端对证书内容计算哈希值，并与解密得到的哈希值进行比较。</p>
+<p>​				1. 如果一致，则证书真实可信。</p>
+<p>​				2. 如果不一致，则证书可能被篡改或伪造。</p>
+<p>​	再然后，客户端检查证书中的域名是否与访问的域名一致。</p>
+<p>​				1. 如果一致，则域名验证通过。</p>
+<p>​				2. 如果不一致，则可能是域名不匹配或证书被滥用。</p>
+<p>​	之后，客户端检查证书是否在有效期内。</p>
+<p>​				1. 如果证书在有效期内，则有效期验证通过。</p>
+<p>​				2. 如果证书已过期，则客户端会拒绝连接。</p>
+<p>​	最后，客户端检查证书是否被吊销（如通过 CRL 或 OCSP）。</p>
+<p>​				1. 如果证书未被吊销，则吊销状态验证通过。</p>
+<p>​				2. 如果证书已被吊销，则客户端会拒绝连接。</p>
+<p>​	所有验证全部通过，通过，通过，通过，通过之后，客户端就成功验证了服务器的身份，可以确认服务器是可信的，并与之建立安全的 HTTPS 连接。</p>
+<p><strong>附</strong>：</p>
+<p>​	自签名证书是由服务器自己生成并签名的数字证书，而不是由受信任的第三方证书颁发机构签发的。换句话说，服务器既是证书的申请者，也是证书的签发者，就像你向老师交作业自己给自己签字一样。</p>
+<hr>
+<h2 id="GET和POST："><a href="#GET和POST：" class="headerlink" title="GET和POST："></a>GET和POST：</h2><h3 id="GET与POST的一些区别："><a href="#GET与POST的一些区别：" class="headerlink" title="GET与POST的一些区别："></a>GET与POST的一些区别：</h3><ul>
+<li>GET习惯上把客户端的数据通过query string来传输，而POST习惯上通过body来传输。</li>
+<li>GET习惯上从服务器获取数据，POST习惯上是客户端给服务器上传数据</li>
+<li>GET请求具有幂等性，POST请求不具有幂等性。</li>
+<li>GET请求可以被缓存，而POST请求不能被缓存。</li>
+</ul>
+<h3 id="GET和POST的职能："><a href="#GET和POST的职能：" class="headerlink" title="GET和POST的职能："></a>GET和POST的职能：</h3><p>​	从理论上讲，<strong>GET</strong> 和 <strong>POST</strong> 请求虽然有各自的语义和推荐用途，但在一定条件下，它们的功能是可以<strong>交换的</strong>，即一个请求方法可以用于另一个请求方法的传统功能。</p>
+<p>​	理论上，可以通过 GET 请求来提交数据（比如在 URL 中传递参数），这相当于在某些情况下 模拟 POST 请求，甚至可以直接带上body数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;http://example.com/api/test&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;GET&#x27;</span>,</span><br><span class="line">  <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">body</span>: <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">key</span>: <span class="string">&#x27;value&#x27;</span> &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;GET with body:&#x27;</span>, data))</span><br><span class="line">  .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;Error:&#x27;</span>, error));</span><br></pre></td></tr></table></figure>
+
+
+
+<p>​	理论上，你也可以使用 POST 请求来获取数据，例如，使用 POST 请求提交一个查询条件（将条件放在请求体中），服务器根据这些条件返回结果。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;http://example.com/api/test?param1=value1&amp;param2=value2&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">  <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">body</span>: <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">name</span>: <span class="string">&#x27;John&#x27;</span>, <span class="attr">age</span>: <span class="number">30</span> &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;POST with query string and body:&#x27;</span>, data))</span><br><span class="line">  .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;Error:&#x27;</span>, error));</span><br></pre></td></tr></table></figure>
+
+
+
+<p>​	然而，这些做法通常不符合 HTTP 协议的最佳实践，并且可能带来一些问题和副作用。比如在 GET 请求中包含 body，很多实现会忽略 body 数据，因为body的语义未定义。</p>
+<h3 id="关于GET请求的URL长度："><a href="#关于GET请求的URL长度：" class="headerlink" title="关于GET请求的URL长度："></a>关于GET请求的URL长度：</h3><p>​	反正都杂谈了，顺便说点小垃圾只是吧。</p>
+<p>​	网上有一种说法是说GET请求的长度存在上限，但实际上RFC 2616或者RFC 2396，都没有具体设定URL的长度上限，之所以实际开发中有上限，是因为浏览器为了确保性能、安全和兼容性对其做出上限；又或者服务器为了防止过长的请求导致资源消耗过大或引发安全问题而限制长度。</p>
+<h3 id="关于POST比GET更加安全："><a href="#关于POST比GET更加安全：" class="headerlink" title="关于POST比GET更加安全："></a>关于POST比GET更加安全：</h3><p>​	其实我开始也觉得POST比GET更加安全，因为GET把数据放在query string上，从URL中就能看到用户名和密码了；而POST把数据放在body中，登录时看不到，很安全😋。</p>
+<p>​	实际上，通过F12开发者工具或者Fiddler(我还没搞懂，搞懂再水一期😋)一抓包就原形毕露了。</p>
+<hr>
+<h2 id="Socket-IO"><a href="#Socket-IO" class="headerlink" title="Socket.IO:"></a>Socket.IO:</h2><h3 id="什么是Socket-IO"><a href="#什么是Socket-IO" class="headerlink" title="什么是Socket.IO:"></a>什么是Socket.IO:</h3><p>​	Socket.IO 是一个用于 <strong>实时、双向、基于事件通信</strong> 的 JavaScript 库，适用于浏览器和 Node.js。它在 WebSockets 之上进行了一层封装，并提供了自动降级机制（如 HTTP 长轮询），确保在不同网络环境下都能实现稳定的实时通信。</p>
+<h3 id="Socket-IO的优点："><a href="#Socket-IO的优点：" class="headerlink" title="Socket.IO的优点："></a>Socket.IO的优点：</h3><h4 id="兼容性更好"><a href="#兼容性更好" class="headerlink" title="兼容性更好"></a>兼容性更好</h4><p>​	WebSocket 仅适用于 <strong>支持 WebSocket 的浏览器</strong>，而 Socket.IO <strong>可以在所有环境中运行</strong>，即使浏览器不支持 WebSocket，它也会自动降级到 <strong>XHR 轮询</strong> 或 <strong>JSONP 轮询</strong>，保证通信稳定性。</p>
+<p><strong>附：</strong></p>
+<p><strong>XHR 轮询：</strong>传统的AJAX轮询，每隔一段时间（如 1 秒）向服务器发送请求，检查是否有新消息，但是频繁请求可		     能会增加服务器负担。</p>
+<p><strong>JSONP 轮询：</strong>利用<Script>标签绕过浏览器的同源策略，来加载任何域的JS文件。同源”是指网页的 URL 与请求			的资源 URL 在域名、协议或端口全部相同，任意一个不同即为不同源。</p>
+<h4 id="断线重连"><a href="#断线重连" class="headerlink" title="断线重连"></a>断线重连</h4><p>​	<strong>WebSocket 断开后不会自动重连</strong>，需要手动编写重连逻辑：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">connect</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> ws = <span class="keyword">new</span> <span class="title class_">WebSocket</span>(<span class="string">&quot;ws://localhost:3000&quot;</span>);</span><br><span class="line">    ws.<span class="property">onclose</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(connect, <span class="number">1000</span>); <span class="comment">// 断开后 1 秒后重连</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">connect</span>();</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>Socket.IO 内置重连机制</strong>，不需要手动处理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> socket = <span class="title function_">io</span>(<span class="string">&quot;http://localhost:3000&quot;</span>, &#123; <span class="attr">reconnection</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">		<span class="comment">//reconnection: true允许客户端在连接失败时自动尝试重连，直到成功或达到最大重试次数。</span></span><br><span class="line">socket.<span class="title function_">on</span>(<span class="string">&quot;connect_error&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;连接失败，正在重试...&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="认证机制："><a href="#认证机制：" class="headerlink" title="认证机制："></a>认证机制：</h4><p>​	WebSocket <strong>本身不提供认证</strong>，但可以通过在URL中添加token进行认证,不过并不安全。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> socket = <span class="keyword">new</span> <span class="title class_">WebSocket</span>(<span class="string">&quot;ws://example.com/socket?token=your_jwt_token&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>​	相比之下，Socket.IO支持直接auth认证</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> socket = <span class="title function_">io</span>(<span class="string">&quot;http://localhost:3000&quot;</span>, &#123;</span><br><span class="line">    <span class="attr">auth</span>: &#123; <span class="attr">token</span>: <span class="string">&quot;your_jwt_token&quot;</span> &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="房间机制："><a href="#房间机制：" class="headerlink" title="房间机制："></a>房间机制：</h4><p>​	WebSocket <strong>没有房间</strong>概念，所有消息都广播给所有连接的客户端。如果想实现房间功能，需要手动管理：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> rooms = &#123;&#125;; <span class="comment">// 存储房间成员</span></span><br><span class="line"></span><br><span class="line">ws.<span class="title function_">on</span>(<span class="string">&quot;message&quot;</span>, <span class="function">(<span class="params">message</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(message);</span><br><span class="line">    <span class="keyword">if</span> (data.<span class="property">type</span> === <span class="string">&quot;join&quot;</span>) &#123;</span><br><span class="line">        rooms[data.<span class="property">room</span>] = rooms[data.<span class="property">room</span>] || [];</span><br><span class="line">        rooms[data.<span class="property">room</span>].<span class="title function_">push</span>(ws);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (data.<span class="property">type</span> === <span class="string">&quot;message&quot;</span>) &#123;</span><br><span class="line">        rooms[data.<span class="property">room</span>].<span class="title function_">forEach</span>(<span class="function"><span class="params">client</span> =&gt;</span> client.<span class="title function_">send</span>(data.<span class="property">message</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>​	Socket.IO 直接支持 <code>socket.join(&quot;room1&quot;)</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">socket.<span class="title function_">on</span>(<span class="string">&quot;joinRoom&quot;</span>, <span class="function">(<span class="params">room</span>) =&gt;</span> &#123;</span><br><span class="line">    socket.<span class="title function_">join</span>(room);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="事件驱动："><a href="#事件驱动：" class="headerlink" title="事件驱动："></a>事件驱动：</h4><p>​	<strong>事件驱动</strong> 指客户端和服务器<strong>可以定义、监听和触发事件</strong>，实现更灵活的双向通信。</p>
+<p>​	但是WebSocket 只能收发文本,需要手动解析 JSON 并区分不同的消息类型。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ws.<span class="title function_">send</span>(<span class="string">&quot;Hello, Server!&quot;</span>);</span><br><span class="line">ws.<span class="property">onmessage</span> = <span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;收到消息:&quot;</span>, event.<span class="property">data</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>​	Socket.IO 支持事件驱动,无需手动解析 JSON,跟axios一样方便</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">socket.<span class="title function_">emit</span>(<span class="string">&quot;chatMessage&quot;</span>, &#123; <span class="attr">user</span>: <span class="string">&quot;Alice&quot;</span>, <span class="attr">message</span>: <span class="string">&quot;Hello!&quot;</span> &#125;);</span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">on</span>(<span class="string">&quot;chatMessage&quot;</span>, <span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;data.user&#125;</span>: <span class="subst">$&#123;data.message&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Socket-IO的使用："><a href="#Socket-IO的使用：" class="headerlink" title="Socket.IO的使用："></a>Socket.IO的使用：</h3><p>​	这么好的东西，该如何使用呢？很简单。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install socket.io-client</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.socket.io/4.4.1/socket.io.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引入之后，就可以通过Socket.IO建立WebSocket通信了，如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> socket = <span class="title function_">io</span>(<span class="string">&quot;http://localhost:3000&quot;</span>); <span class="comment">//连接服务器</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">on</span>(<span class="string">&quot;message&quot;</span>, <span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;收到服务器消息:&quot;</span>, data);</span><br><span class="line">&#125;) <span class="comment">//监听服务器事件</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">emit</span>(<span class="string">&quot;chatMessage&quot;</span>, <span class="string">&quot;你好，服务器！&quot;</span>)<span class="comment">//发送事件到服务器</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">disconnect</span>()<span class="comment">//断开连接</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://159357254680.github.io/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/" class="post-title-link" itemprop="url">闭包，垃圾回收和内存泄露</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-02-18 16:58:10" itemprop="dateCreated datePublished" datetime="2025-02-18T16:58:10+08:00">2025-02-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-02-23 16:08:40" itemprop="dateModified" datetime="2025-02-23T16:08:40+08:00">2025-02-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="一-闭包"><a href="#一-闭包" class="headerlink" title="一 . 闭包"></a>一 . 闭包</h1><h2 id="1-什么是闭包："><a href="#1-什么是闭包：" class="headerlink" title="1.什么是闭包："></a>1.什么是闭包：</h2><p>​	什么是闭包？引用<strong>JS</strong>书中的定义，当一个函数能够记住并且访问其所在的作用域，即使这个函数是在作用域之外被执行的，这就是闭包。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> <span class="comment">// a 是一个被 a 创建的局部变量</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; <span class="comment">// b 是一个内部函数</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) <span class="comment">// 使用了父函数中声明的变量</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//1 这就是闭包</span></span><br></pre></td></tr></table></figure>
+
+<p>​	在a() 函数中声明了一个私有变量 a , b() 函数是 a() 函数内部的函数，此时 a 内部的所有局部变量，对 b 都是可见的，但是a()中的变量对于外部是不可见的，b 内部的局部变量，对 a 就是不可见的。这就是JS的”作用域链“。其中，a()在执行之后，将 b 返回，并赋值给了c ，通过c从外部访问了 a() 的内部变量a。</p>
+<p>​	闭包是一种保护私有变量的机制，它在函数执行时创建一个私有作用域，从而保护内部的私有变量不受外界干扰,同时允许外界访问内部的私有变量。</p>
+<p>​	直观地说，闭包就像是一个不会被销毁的栈环境。</p>
+<h2 id="2-闭包的优点："><a href="#2-闭包的优点：" class="headerlink" title="2.闭包的优点："></a>2.闭包的优点：</h2><p>​	从上面的例子可以注意到，a是a()中的一个私有变量，但是我们却在全局作用域中访问了函数的私有变量，从中可以看出了闭包的几个优点：</p>
+<ol>
+<li><strong>保护私有变量</strong></li>
+<li><strong>延长变量寿命</strong></li>
+<li><strong>实现变量共享</strong></li>
+</ol>
+<p>	</p>
+<p>为什么这么说呢？可以来看看接下来的几个例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="keyword">const</span> a = <span class="number">2</span> <span class="comment">// 在全局作用域中为a赋值为2</span></span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//最后结果仍然是1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	上述代码中，a是a（）中的一个私有变量，因此外部无法直接访问它。即使在全局声明了一个同名变量a，也无法影响到函数内部，a变量的值只能在函数内部被修改和访问，这样就保护了闭包中的私有变量。</p>
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 a还活着！</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	一般情况下，在函数<strong>fn</strong>执行完后，就应该连同它里面的变量一同被垃圾回收，但是在这个例子中，<strong>f1（）</strong>函数作为fn的返回值被赋值给了<strong>add</strong>，这时候相当于<strong>add&#x3D;function f1(){ … }<strong>，并且</strong>f1()<strong>内部引用着</strong>fn</strong>里的变量<strong>a</strong>，所以变量<strong>a</strong>无法被销毁，而变量n是每次被调用时新创建的，所以每次<strong>f1</strong>执行完后它就把属于自己的变量连同自己一起销毁，但是把<strong>a</strong>保留了下来，实现了延长变量寿命，但这又出现了一个新问题，后面再讲。</p>
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123; </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//1 我从外部访问了私有变量！</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	还是上面的例子，即使<strong>a</strong>是**a()**中的私有变量，但仍然从外部访问了它，这就是变量共享。</p>
+<hr>
+<h2 id="3-闭包的作用"><a href="#3-闭包的作用" class="headerlink" title="3. 闭包的作用"></a>3. 闭包的作用</h2><h4 id="3-1节流"><a href="#3-1节流" class="headerlink" title="3.1节流"></a>3.1节流</h4><p>​	<strong>节流</strong>是指限制函数的执行频率<strong>，即在一定时间间隔内</strong>最多只执行一次**，即使事件被多次触发。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">throttle</span>(<span class="params">fn, delay</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> lastTime = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> now = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">        <span class="keyword">if</span> (now - lastTime &gt;= delay) &#123;</span><br><span class="line">            fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">            lastTime = now; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> log = <span class="title function_">throttle</span>(<span class="function">() =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;我滚了&quot;</span>), <span class="number">1000</span>);</span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;scroll&quot;</span>, log);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-2-防抖"><a href="#3-2-防抖" class="headerlink" title="3.2 防抖"></a>3.2 防抖</h4><p>​	<strong>防抖</strong>是指在事件触发后，<strong>一定时间内不再触发</strong>，才执行函数。</p>
+<p>​	如果在等待时间内再次触发，则重新计时。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">debounce</span>(<span class="params">fn, delay</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> timer = <span class="literal">null</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">        &#125;, delay);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> input = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;input&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> handleInput = <span class="title function_">debounce</span>(<span class="function">(<span class="params">event</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;搜索：&quot;</span> + event.<span class="property">target</span>.<span class="property">value</span>);</span><br><span class="line">&#125;, <span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">input.<span class="title function_">addEventListener</span>(<span class="string">&quot;input&quot;</span>, handleInput);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-3-函数柯里化"><a href="#3-3-函数柯里化" class="headerlink" title="3.3 函数柯里化"></a>3.3 函数柯里化</h4><p>​	<strong>柯里化 <strong>是指将一个</strong>多参数</strong>函数转换成多个<strong>单参数</strong>函数的调用链。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">curry</span>(<span class="params">fn</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> <span class="title function_">curried</span>(<span class="params">...args</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.<span class="property">length</span> &gt;= fn.<span class="property">length</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> fn.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">...nextArgs</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> curried.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args.<span class="title function_">concat</span>(nextArgs));</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">add</span>(<span class="params">a, b, c</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> a + b + c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> curriedAdd = <span class="title function_">curry</span>(add);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>)(<span class="number">2</span>)(<span class="number">3</span>)); <span class="comment">// 6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>, <span class="number">2</span>)(<span class="number">3</span>)); <span class="comment">// 6</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">curriedAdd</span>(<span class="number">1</span>)(<span class="number">2</span>, <span class="number">3</span>)); <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-4-模块化"><a href="#3-4-模块化" class="headerlink" title="3.4 模块化"></a>3.4 模块化</h4><p>​	<strong>模块化</strong>是指<strong>将代码拆分成独立的模块，每个模块负责不同的功能</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">CounterModule</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> count = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">increment</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            count++;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Count:&quot;</span>, count);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">decrement</span>: <span class="keyword">function</span> (<span class="params"></span>)&#123;</span><br><span class="line">            count--;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Count:&quot;</span>, count);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attr">reset</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Reset to 0&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">increment</span>(); <span class="comment">// Count: 1</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">increment</span>(); <span class="comment">// Count: 2</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">decrement</span>(); <span class="comment">// Count: 1</span></span><br><span class="line"><span class="title class_">CounterModule</span>.<span class="title function_">reset</span>(); <span class="comment">// Reset to 0</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>​	现在，再返回前面的问题，为什么fn()中的a被保留下来，而f1()中的n被销毁了呢？这就引出了JS的垃圾回收机制。</p>
+<h1 id="二-垃圾回收"><a href="#二-垃圾回收" class="headerlink" title="二 . 垃圾回收"></a>二 . 垃圾回收</h1><h2 id="1-什么是垃圾："><a href="#1-什么是垃圾：" class="headerlink" title="1. 什么是垃圾："></a>1. 什么是垃圾：</h2><p>​	什么是垃圾呢？垃圾是如何定义的呢？</p>
+<p>​	很简单，JS中的函数，变量，对象等都需要占用一定的内存，当这些东西不再被使用的时候，就变成了垃圾。</p>
+<p>垃圾可以分为以下几类：</p>
+<ol>
+<li><strong>已经调用完毕的函数作用域及其内部的值</strong></li>
+<li><strong>无法被访问到的值</strong></li>
+</ol>
+<p>​	正如之前所说，<strong>JS</strong>中的所有的变量都会占用内存，当这些变量变成垃圾的时候，如果不进行回收，内存就会被一直占用，随着程序的运行，垃圾也会越来越多，总有一刻，内存会被占满，程序也就无法运行了。</p>
+<hr>
+<h2 id="2-垃圾回收机制："><a href="#2-垃圾回收机制：" class="headerlink" title="2. 垃圾回收机制："></a>2. 垃圾回收机制：</h2><p>​	首先，根据JS的内存分配机制，基本数据类型保存在固定的占空间中，可以直接通过值进行访问，但是复杂数据类型的大小不固定，所以其会通过引用地址保存在栈空间，而引用的指向保存的值保存在堆空间，通过引用访问，比如函数，对象等。</p>
+<p>​	栈内存中的基本数据类型，可以直接通过操作系统来进行处理，但是堆内存中的复杂数据类型的值的大小不确定，这就需要JS的引擎通过垃圾回收机制进行处理。</p>
+<h3 id="2-1-可达性："><a href="#2-1-可达性：" class="headerlink" title="2.1 可达性："></a>2.1 可达性：</h3><p>​	在JS中，内存管理的主要概念是可达性，”可达性“值就是那些以某种方式可访问的值，他们被保证存储在内存中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> me = &#123;</span><br><span class="line">	<span class="attr">name</span>:<span class="string">&quot;奶龙&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	在这里，创建了一个全局变量me，它指向了一个对象{name:“奶龙”}，因此这个这个对象是可达的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> me = &#123;</span><br><span class="line">	<span class="attr">name</span>:<span class="string">&quot;奶龙&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">me = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+
+<p>​	此时，对象{name:“奶龙”}处于不可达的状态，由于无法访问它，垃圾回收器将回收这个数据并释放内存。</p>
+<h3 id="2-2-引用计数和标记清除："><a href="#2-2-引用计数和标记清除：" class="headerlink" title="2.2 引用计数和标记清除："></a>2.2 引用计数和标记清除：</h3><p>​	在浏览器的历史上，有两种垃圾回收的方法：</p>
+<ul>
+<li>标记清除</li>
+<li>引用计数</li>
+</ul>
+<h4 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h4><p>​	引用计数是一种几乎被淘汰的垃圾回收机制，它通过对每个复杂数据类型的变量进行计数，比如：</p>
+<ul>
+<li>当变量声明并赋值之后，值得引用数为1</li>
+<li>当同一个值被赋值给另一个变量时，引用数加1</li>
+<li>当保存该值引用的变量被其它值覆盖时，引用数减1</li>
+<li>当一个值的引用数变为0时，就表示无法再访问该值，此时垃圾回收机制就会将其清除并回收内存</li>
+</ul>
+<p>​	看起来很完美，但只是看起来而已，引用计数存在一个严重的缺陷：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">problem</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">const</span> objA = &#123;&#125;</span><br><span class="line">       <span class="keyword">const</span> objB = &#123;&#125;</span><br><span class="line">       objA.<span class="property">a</span> = objB</span><br><span class="line">       objB.<span class="property">b</span> = objA</span><br><span class="line">       </span><br><span class="line">       objA = <span class="literal">null</span></span><br><span class="line">       objB = <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	可以看到，虽然没有其他引用指向objA和objB之前分别指向的两个对象，但它们相互引用，导致它们的引用数永远不会为零，也就永远不会被回收了。因此，现代浏览器采用了另一种新的回收机制。</p>
+<h4 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h4><p>​	相对于引用计数，标记清除就简单的多了，无非就是打不打标记的问题，就跟二进制的0和1十分相似，具体步骤如下：</p>
+<ul>
+<li>垃圾收集器在运行时会给内存中的所有变量都加上一个标记，假设内存中所有对象都是垃圾，全标记为0</li>
+<li>然后从各个根对象开始遍历，把不是垃圾的节点改成1</li>
+<li>清理所有标记为0的垃圾，销毁并回收它们所占用的内存空间</li>
+<li>最后，把所有内存中对象标记修改为0，等待下一轮垃圾回收</li>
+</ul>
+<p>​	但是，标记清除算法有一个很大的缺点，就是在清除之后，剩余的对象内存位置是不变的，也会导致空闲内存空间是不连续的，出现了 <code>内存碎片</code>，并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表，这就牵扯出了内存分配的问题，这里不过多介绍。</p>
+<p>回过头来，再来解释上面的问题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 我的a还活着！</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong><code>fn</code> 执行</strong>：</p>
+<ul>
+<li>当调用 <code>fn()</code> 时，局部变量 <code>a</code> 被创建并赋值为 <code>1</code>。</li>
+<li>然后返回的是内部函数 <code>f1</code>，并且这个函数内部会访问外部的 <code>a</code> 变量。</li>
+</ul>
+<p><strong>闭包形成</strong>：</p>
+<ul>
+<li>函数 <code>f1</code> 是一个 <strong>闭包</strong>，它访问了 <code>fn</code> 中的 <code>a</code> 变量。因此，<code>a</code> 被保存在 <code>f1</code> 的作用域中。</li>
+<li>这意味着即使 <code>fn</code> 执行完毕，<code>fn</code> 中的 <code>a</code> 变量依然存在于 <code>f1</code> 的 <strong>闭包环境中</strong>，并不会被销毁。</li>
+</ul>
+<p>**调用 <code>add()</code>**：</p>
+<ul>
+<li><code>add</code> 是 <code>fn()</code> 的返回值，即 <code>f1</code> 函数。</li>
+<li>每次调用 <code>add()</code> 时，<code>f1</code> 执行并访问了闭包中的 <code>a</code> 变量。</li>
+<li>尽管 <code>fn</code> 执行完毕，<code>a</code> 变量的作用域并没有被销毁，因为 <code>f1</code>（闭包）仍然在访问它。<strong>闭包让 <code>a</code> 保持在内存中，直到闭包本身不再被引用。</strong></li>
+</ul>
+<p>省流：</p>
+<p><strong>根对象：</strong></p>
+<ul>
+<li><code>window</code></li>
+<li><code>add</code>（全局变量，指向 <code>f1</code>）</li>
+</ul>
+<p><strong>可达对象：</strong></p>
+<ul>
+<li><code>add</code> 指向 <code>f1</code></li>
+<li><code>f1</code> 通过闭包作用域 <strong>引用了 <code>a</code></strong></li>
+<li><code>a</code> 仍然可达</li>
+</ul>
+<hr>
+<h1 id="三-内存泄漏"><a href="#三-内存泄漏" class="headerlink" title="三. 内存泄漏"></a>三. 内存泄漏</h1><h2 id="1-什么是内存泄露"><a href="#1-什么是内存泄露" class="headerlink" title="1.什么是内存泄露"></a>1.什么是内存泄露</h2><p>​	在介绍闭包的时候，我们发现了一个问题，现在再来看看：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">let</span> a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">        <span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(n++)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a++)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> add = <span class="title function_">fn</span>()</span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 2 </span></span><br><span class="line"><span class="title function_">add</span>() <span class="comment">//1 3 我的a还活着！</span></span><br></pre></td></tr></table></figure>
+
+<p>​	由于我们使用了闭包，因此延长了局部变量a的寿命，使得我们能够在函数执行完毕时访问它，但这样也导致了a会一直存活，无法被回收，这就是内存泄露。</p>
+<p>​	<strong>内存泄漏（Memory Leak）是指程序在运行时无法释放不再使用的内存，导致内存逐渐耗尽，甚至造成程序崩溃或性能下降。</strong></p>
+<h2 id="2-怎样会引起内存泄露"><a href="#2-怎样会引起内存泄露" class="headerlink" title="2. 怎样会引起内存泄露"></a>2. 怎样会引起内存泄露</h2><h3 id="2-1-闭包"><a href="#2-1-闭包" class="headerlink" title="2.1 闭包"></a>2.1 闭包</h3><p>​	略</p>
+<h3 id="2-2-意外的全局变量"><a href="#2-2-意外的全局变量" class="headerlink" title="2.2 意外的全局变量"></a>2.2 意外的全局变量</h3><p>​	全局变量具有非常长的生命周期，一直到页面被关闭，它都会存活着，所以全局变量上的内存一直都不会被回收。</p>
+<h3 id="2-3-角落的定时器"><a href="#2-3-角落的定时器" class="headerlink" title="2.3 角落的定时器"></a>2.3 角落的定时器</h3><p>​	定时器是我们经常使用的一个功能，如果我们在某个页面使用了定时器，但在关闭定时器时没有清除定时器的话，定时器还是活着的。换句话说，定时器的生命周期并不挂靠在页面上，如果在当前页面的JS通过定时器注册了某个回调函数，而该回调函数又持有当前页面的某个变量或某个DOM元素，就会导致即使页面销毁，由于定时器持有该页面部分引用而造成页面无法正常回收，导致内存泄漏。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clearTimeoutExample</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;Large Object&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> timeoutId = <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;This will be cleared after 1 second.&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">clearTimeoutExample</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-被遗忘的DOM元素"><a href="#2-4-被遗忘的DOM元素" class="headerlink" title="2.4 被遗忘的DOM元素"></a>2.4 被遗忘的DOM元素</h3><p>​	DOM元素的生命周期是取决于是否可以挂载在DOM树上，当从DOM树上移除时，也就可以被销毁移除了。但是，如果某个DOM元素在JS中也持有它的引用时，那么它的生命周期就由JS和是否在DOM树上二者决定了，只有将两个地方都去清理才能正常回收它</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myElement&quot;</span>&gt;<span class="title class_">Hello</span>, <span class="title class_">World</span>!&lt;/div&gt;</span><br><span class="line">   <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;removeButton&quot;</span>&gt;</span>Remove Element<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">   </span><br><span class="line">   <span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       <span class="keyword">let</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myElement&quot;</span>);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;removeButton&quot;</span>).<span class="title function_">addEventListener</span>(<span class="string">&quot;click&quot;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">           <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">removeChild</span>(element);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">         </span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">       &#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">   </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>​	上述代码中，即使我们从DOM树中移除了<code>#myElement</code> 元素，但<code>element</code> 变量仍然持有对 <code>#myElement</code> 的引用，导致内存泄露。</p>
+<h2 id="3-如何解决内存泄露"><a href="#3-如何解决内存泄露" class="headerlink" title="3.如何解决内存泄露"></a>3.如何解决内存泄露</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">big</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> bigData = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;big&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(bigData.<span class="property">length</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> createData = <span class="title function_">big</span>();</span><br><span class="line"><span class="comment">// 在不再需要时，手动解除引用</span></span><br><span class="line">createData = <span class="literal">null</span>;  <span class="comment">// 解除闭包对 largeData 的引用，允许垃圾回收</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> a = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">b</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(a) </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="title function_">a</span>()</span><br><span class="line"><span class="title function_">c</span>() <span class="comment">//尽量使用局部变量而非全局变量</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clearTimeoutExample</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">1000000</span>).<span class="title function_">fill</span>(<span class="string">&quot;Large Object&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> timeoutId = <span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;This will be cleared after 1 second.&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 在不再需要时清除定时器</span></span><br><span class="line">    <span class="built_in">clearTimeout</span>(timeoutId);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">clearTimeoutExample</span>();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;myElement&quot;</span>&gt;<span class="title class_">Hello</span>, <span class="title class_">World</span>!&lt;/div&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;removeButton&quot;</span>&gt;</span>Remove Element<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  </span><br><span class="line">  &lt;script&gt;</span><br><span class="line">      <span class="comment">// 在JS中持有对DOM元素的引用</span></span><br><span class="line">      <span class="keyword">let</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;myElement&quot;</span>);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 给按钮绑定事件监听器</span></span><br><span class="line">      <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;removeButton&quot;</span>).<span class="title function_">addEventListener</span>(<span class="string">&quot;click&quot;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">          <span class="comment">// 从DOM树中移除元素</span></span><br><span class="line">          <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">removeChild</span>(element);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 清除对元素的引用，允许垃圾回收</span></span><br><span class="line">          element = <span class="literal">null</span>;</span><br><span class="line">      &#125;);</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -179,7 +971,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-01-25 14:17:27" itemprop="dateModified" datetime="2025-01-25T14:17:27+08:00">2025-01-25</time>
+      <time title="Modified: 2025-01-25 15:20:34" itemprop="dateModified" datetime="2025-01-25T15:20:34+08:00">2025-01-25</time>
     </span>
 
   
@@ -215,7 +1007,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;<span class="keyword">throw</span> <span class="number">2</span>;&#125;<span class="keyword">catch</span>(a)&#123;</span><br><span class="line">       <span class="variable language_">console</span>.<span class="title function_">log</span>(a) <span class="comment">//2</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a) <span class="comment">//undefined</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="1-4-作用域链"><a href="#1-4-作用域链" class="headerlink" title="1.4 作用域链"></a>1.4 作用域链</h2><p>​	简单来说，由多个执行上下文的变量对象构成的链表就叫作用域链。作用域链主要是进行标识符（在js中所有我们可以自主命名的都可以称之为 标识符，比如变量名和函数名）的查询，标识符解析就是沿着作用域链一级一级的搜索标识符的过程，而作用域链就是保证对变量和函数的有序访问。</p>
-<p>在查找一个变量时，通常会进行一下步骤：</p>
+<p>在查找一个变量时，通常会进行以下步骤：</p>
 <ul>
 <li><p>从当前上下文的变量对象中查找</p>
 </li>
@@ -229,11 +1021,11 @@
 </ul>
 <h2 id="1-5作用域嵌套"><a href="#1-5作用域嵌套" class="headerlink" title="1.5作用域嵌套"></a>1.5作用域嵌套</h2><p>​	就像函数可以嵌套一样，作用域也可以多个嵌套，而作用域嵌套遵循以下的规则：</p>
 <ul>
-<li>内部作用域能够访问外部作用域</li>
-<li>外部作用域无法访问内部作用域</li>
-<li>兄弟作用域不可互相访问</li>
+<li>内部作用域能够访问外部作用域。</li>
+<li>外部作用域无法访问内部作用域。</li>
+<li>兄弟作用域不可互相访问。</li>
 </ul>
-<h1 id="2-执行上下文"><a href="#2-执行上下文" class="headerlink" title="2 执行上下文"></a>2 执行上下文</h1><h2 id="2-1-什么是执行上下文"><a href="#2-1-什么是执行上下文" class="headerlink" title="2.1 什么是执行上下文"></a>2.1 什么是执行上下文</h2><p>​	什么是执行上下文？当一个函数执行时，会创建一个被称为执行上下文的内部对象，这就像一份记录，记录了函数在哪里别调用，函数的调用方式，传入的参数等信息，一个执行上下文定义了一个函数执行时的环境。简单来说，只要有js代码运行，那么它就一定是运行在执行上下文中。</p>
+<h1 id="2-执行上下文"><a href="#2-执行上下文" class="headerlink" title="2 执行上下文"></a>2 执行上下文</h1><h2 id="2-1-什么是执行上下文"><a href="#2-1-什么是执行上下文" class="headerlink" title="2.1 什么是执行上下文"></a>2.1 什么是执行上下文</h2><p>​	什么是执行上下文？当一个函数执行时，会创建一个被称为执行上下文的内部对象，这就像一份记录，记录了函数在哪里被调用，函数的调用方式，传入的参数等信息，一个执行上下文定义了一个函数执行时的环境。简单来说，只要有js代码运行，那么它就一定是运行在执行上下文中。</p>
 <p>在js中，执行上下文有三种类型：</p>
 <ul>
 <li>全局执行上下文：只存在一个，任何不在函数内部的代码都在全局上下文中。它会执行两件事：创建一个全局的 <code>window</code>对象（浏览器的情况下），并且设置 <code>this</code> 的值等于这个全局对象。</li>
@@ -256,7 +1048,7 @@
 <p>​	当 Js 引擎第一次遇到我们写的代码时，它会创建一个<strong>全局执行上下文</strong>并且压入当前执行栈。每当引擎遇到一个函数调用，它会为该函数创建一个<strong>新的函数执行上下</strong>文并压入栈的顶部。</p>
 <p>​	引擎会优先执行那些执行上下文位于栈顶的函数。当该函数执行结束时，执行上下文从栈中弹出，控制流程到达当前栈中的下一个上下文。</p>
 <h2 id="2-3-如何管理执行栈"><a href="#2-3-如何管理执行栈" class="headerlink" title="2.3 如何管理执行栈"></a>2.3 如何管理执行栈</h2><p>​	为了解释执行上下文的行为，可以将其以代码的形式阐述。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title class_">Stack</span> = [] <span class="comment">//假设这是执行栈，执行栈会先压入全局执行上下文</span></span><br><span class="line">   <span class="title class_">Stack</span>.<span class="title function_">push</span>(<span class="string">&#x27;全局作用域&#x27;</span>)</span><br><span class="line">   </span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;全局作用域&#x27;</span>)<span class="comment">//在全局执行上下文中，js会先执行全局代码，直到遇到一个函数调用								 </span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">       <span class="title function_">f2</span>()</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">f2</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;函数作用域&#x27;</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_">f1</span>()<span class="comment">//这里遇到函数调用f1(),它是在全局执行上下文中被调用，因此在全局执行上下文的上方为f1加上一个函数执行上		  下文</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">push</span>(f1)</span><br><span class="line">	<span class="comment">//在f1中又调用了f2，因此在f1的函数执行上下文的上方为f2创建一个函数执行上下文</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">push</span>(f2)</span><br><span class="line"></span><br><span class="line"><span class="comment">//遵循后进先出，先执行顶端的f2</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">pop</span>()<span class="comment">//f2执行完毕，将其移除</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">pop</span>()<span class="comment">//f1执行完毕，将其移除</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title class_">Stack</span> = [] <span class="comment">//假设这是执行栈，执行栈会先压入全局执行上下文</span></span><br><span class="line">   <span class="title class_">Stack</span>.<span class="title function_">push</span>(<span class="string">&#x27;全局作用域&#x27;</span>)</span><br><span class="line">   </span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;全局作用域&#x27;</span>)<span class="comment">//在全局执行上下文中，js会先执行全局代码，直到遇到一个函数调用								 </span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">f1</span>(<span class="params"></span>)&#123;</span><br><span class="line">       <span class="title function_">f2</span>()</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">f2</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;函数作用域&#x27;</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_">f1</span>()<span class="comment">//这里遇到函数调用f1(),它是在全局执行上下文中被调用，因此在全局执行上下文的上方为f1加上一个函数执行上下文</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">push</span>(f1)</span><br><span class="line">	<span class="comment">//在f1中又调用了f2，因此在f1的函数执行上下文的上方为f2创建一个函数执行上下文</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">push</span>(f2)</span><br><span class="line"></span><br><span class="line"><span class="comment">//遵循后进先出，先执行顶端的f2</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">pop</span>()<span class="comment">//f2执行完毕，将其移除</span></span><br><span class="line"><span class="title class_">Stack</span>.<span class="title function_">pop</span>()<span class="comment">//f1执行完毕，将其移除</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>​	当上述代码在浏览器加载时，js 引擎创建了一个全局执行上下文并把它压入当前执行栈。当遇到 f1（）函数调用时，js 引擎为该函数创建一个新的执行上下文并把它压入当前执行栈的顶部。</p>
 <p>​	当从 <code>f1()</code> 函数内部调用 <code>f2()</code> 函数时，js 引擎为 <code>f2()</code> 函数创建了一个新的执行上下文并把它压入当前执行栈的顶部。当 <code>f2()</code> 函数执行完毕，它的执行上下文会从当前栈弹出，并且控制流程到达下一个执行上下文，即 <code>f1()</code> 函数的执行上下文。</p>
