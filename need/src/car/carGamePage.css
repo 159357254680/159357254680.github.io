@@ -1,0 +1,158 @@
+
+
+.game-container {
+  position: relative;
+  width: 78rem;
+  height: 41rem;
+  border-radius: 15px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.background {
+  display: flex;
+  position: relative;
+  width: 1250vw; 
+  height: 100%;
+}
+
+
+.background img {
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+}
+
+.car {
+  position: relative; 
+  bottom: 10rem;
+  width: 20rem;
+  height: 6rem;
+}
+
+.car .car-body {
+  width: 20rem;
+  height: 6rem;
+}
+
+.car .wheel-before{
+  position: absolute;
+  width: 3.4rem;
+  height: 3.4rem;
+  left: 3rem;
+  top: 2.6rem;
+}
+
+.car .wheel-after{
+  position: absolute;
+  width: 3.4rem;
+  height: 3.4rem;
+  left: 14rem;
+  top: 2.6rem;
+}
+
+.typing-area {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  z-index: 6;
+}
+
+.text-display {
+  width: 100%;
+  height: 25px;
+  max-width: 800px;
+  display: flex;
+  padding-left: 10px;
+  font-size: 18px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  background: rgb(101, 180, 249);
+  overflow-x: hidden;
+  white-space: nowrap; 
+  letter-spacing: 10px; 
+  scrollbar-width: none; 
+  z-index: 6;
+}
+
+.typing-input {
+  width: 100%;
+  height: 25px;
+  max-width: 800px;
+  padding-left: 10px;
+  font-size: 18px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  background: rgb(101, 180, 249);
+  letter-spacing: 10px; 
+  overflow: hidden;
+  z-index: 6;
+}
+
+
+.score-display {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  z-index: 6;
+}
+.paused-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 50, 0.7); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  flex-direction: column;
+}
+
+.paused-message {
+  font-size: 32px;
+  color: white;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.paused-buttons {
+  display: flex;
+  gap: 20px;
+  flex-direction: column; 
+  align-items: center;
+}
+
+.paused-btn {
+  padding: 12px 24px;
+  font-size: 20px;
+  background-color: #4c7df1;
+  color: white;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  width: 200px;
+  text-align: center;
+}
+
+.paused-btn:hover {
+  background-color: #3a6bb5;
+  transform: scale(1.1);
+}
+
+.paused-btn:focus {
+  outline: none;
+}
