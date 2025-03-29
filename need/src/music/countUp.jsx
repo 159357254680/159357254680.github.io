@@ -12,8 +12,7 @@ export default function CountUp({
   separator = "",
   onStart,
   onEnd,
-  left,
-  top,
+  marginLeft,
 }) {
   const ref = useRef(null);
   const motionValue = useMotionValue(direction === "down" ? to : from);
@@ -88,8 +87,8 @@ export default function CountUp({
               ref={ref} 
               style={{
                 ...styles.CountUp,
-                left:left,
-                top:top
+               marginLeft:marginLeft,
+                top:0
               }}/>;
 }
 

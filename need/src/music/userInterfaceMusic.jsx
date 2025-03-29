@@ -268,21 +268,21 @@ export default function UserInterfaceMusic(){
        </>
     )
 }
-// linear-gradient(180deg, rgba(215, 253, 255, 0.8) 0%, rgba(26, 180, 255, 0.8) 100%)
+
 
 const styles = {
     background:{
         margin:'0',
         boxSizing: 'border-box',
-        width:'75rem',
-        height:'40rem',
+        width:'100%',
+        height:'100vh',
     },
     backgroundImage:{
         position:'absolute',
         left:'-1rem',
         zIndex:'-1',
-        width:'80.5rem',
-        height:'41.5rem',
+        width:'100%',
+        height:'100vh',
     },
     avatar:{
         display:'inline-block',

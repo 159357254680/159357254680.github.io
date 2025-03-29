@@ -11,7 +11,11 @@ export default function CarSelectPage() {
             path={"/CarSelectPage"}
             select={"/MusicSelectPage"}
             main={"/CarMainPage"}
-            userInterface={"/UserInterfaceCar"}/>
+            userInterface={"/UserInterfaceCar"}
+            settingImg ={"/蓝设置.png"}
+            color={"#47E6EE"}
+            />
+           
     )
 
 }

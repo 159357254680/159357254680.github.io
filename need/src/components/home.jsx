@@ -8,15 +8,15 @@ export default function Home() {
   const navigate = useNavigate()
 
   useEffect(() => {
-        document.body.style.overflow = "hidden"
+    document.body.style.overflow = "hidden"
     return () => {
-        document.body.style.overflow = "auto"
+      document.body.style.overflow = "auto"
     }
   }, [])
 
   useEffect(() => {
     const navi = setTimeout(() => {
-        navigate("./UserLogin")
+      navigate("./UserLogin")
     }, 2300)
 
     return () => clearTimeout(navi)
@@ -34,19 +34,21 @@ export default function Home() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }} 
-      transition={{ duration: 2 }} 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 2 }}
       style={styles.background}
     >
       <img
         src="/封面.png"
         alt="如果你看到这行字,说明游戏炸了"
         style={{
-          width: "650px",
-          height: "100px",
+          width: "min(90vw, 650px)",  
+          height: "auto",  
+          aspectRatio: "6.5/1",  
           opacity: `${opacity}`,
+          maxHeight: "15vh",  
         }}
       />
     </motion.div>
@@ -59,7 +61,10 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgb(184, 225, 249)",
-    width: "79rem",
-    height: "41rem",
+    width: "100vw",  
+    height: "100vh",  
+    position: "fixed",  
+    top: 0,
+    left: 0,
   },
 }

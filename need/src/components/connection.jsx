@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import CarReturn from '../car/carReturn'
 
 
 export default function Connection() {
@@ -79,6 +80,8 @@ export default function Connection() {
               }
             `}
         </style>
+
+        <CarReturn path={"/CarMainPage"}/>
 
 
 

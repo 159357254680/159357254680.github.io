@@ -30,6 +30,13 @@ export default function CarGamePage() {
 
   const { targetContext } = useTargetContext()
 
+  useEffect(() => {   
+      document.body.style.overflow = "hidden"
+  return () => {
+      document.body.style.overflow = "auto"
+  };
+  }, []);
+
   useEffect(() => {
     const audio = new Audio('https://m10.music.126.net/20250321202950/3784c36a7db6dfc61a5fbbc26fcfc43d/ymusic/e2c5/2d86/5fa8/628000408cb241ca7ed2e6cec59451a3.mp3?vuutv=XWNmLpCtu8v7WcQ1jlPiQE70EDO6t3YHemORSKzpAUAJm9X1rLr01Jr/V/1EJnJkVMscWjQ2fE70Nwt6MJL9d+dZyVSVj9FUD/dOtt6sc9U=')
     audio.loop = true

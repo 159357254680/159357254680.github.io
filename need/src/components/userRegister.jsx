@@ -228,8 +228,8 @@ export default function UserRegister(){
     const styles = {
         container:{
             position: 'relative',
-            width: '79rem',
-            height: '41rem',
+            width: '100%',
+            height: '100vh',
             marginLeft: '0',
             overflow: 'hidden',
             background:'rgb(201, 201, 201)',

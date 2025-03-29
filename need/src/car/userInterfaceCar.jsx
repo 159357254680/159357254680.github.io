@@ -23,6 +23,14 @@ export default function UserInterfaceMusic(){
     const navigate = useNavigate()
 
     useEffect(() => {
+            document.body.style.overflow = "hidden"
+        return () => {
+            document.body.style.overflow = "auto"
+        }
+    }, [])
+
+
+    useEffect(() => {
         if(!storedToken){
             navigate("/UserLogin",{replace:true})
         }
@@ -270,14 +278,14 @@ const styles = {
     background:{
         margin:'0',
         boxSizing: 'border-box',
-        width:'79rem',
-        height:'41rem',
+        width:'100%',
+        height:'100vh',
     },
     backgroundImage:{
         position:'absolute',
         zIndex:'-1',
-        width:'79rem',
-        height:'41rem',
+        width:'100%',
+        height:'100vh',
     },
     avatar:{
         display:'inline-block',

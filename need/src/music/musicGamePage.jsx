@@ -7,6 +7,8 @@ import TimeOut from './timeOut'
 
 
 export default function MusicGamePage() {
+    const userName = localStorage.getItem('userName')
+    const userId = localStorage.getItem('userId') ? localStorage.getItem('userId') : '未知'
     const storedToken = localStorage.getItem('token')
     const musicBackgroundVolume = localStorage.getItem('musicBackgroundVolume')
 
@@ -167,7 +169,7 @@ export default function MusicGamePage() {
             const randomLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26))
             setNotes((prevNotes) => [
                 ...prevNotes,
-                { letter: randomLetter, x: 100, y: 50, status: 'active' },
+                { letter: randomLetter, x: 110, y: 50, status: 'active' },
             ])
         }
 
@@ -183,7 +185,7 @@ export default function MusicGamePage() {
                 return prevNotes
                     .map((note) => {
                         const newX = Math.max(note.x - adjustedSpeed, 0.1)
-                        if (note.status === 'active' && newX <= 12) {
+                        if (note.status === 'active' && newX <= 15) {
                             setFeedback('miss')
                             setCombo(prevCombo => {
                               setMaxCombo(max => Math.max(max, prevCombo))
@@ -390,18 +392,18 @@ export default function MusicGamePage() {
                 }
         `}
         </style>
-                    <button onClick={() => {
-                        dispatch({ type: 'GameEnd' })
-                        setIsPlaying(false)
-                    }}
-                        style={{position:'absolute'}}
-                    >结束</button>
         
         <div style={styles.background}>
             <img src = {avatar} alt="暂时无法显示" style={styles.avatar} />
             <div style={styles.information}>
-                <p style={{ ...styles.p, fontSize: '24px' }}>Cypher</p>
-                <p style={{ ...styles.p, fontSize: '18px' }}>id:114514</p>
+                <div style={styles.infoRow}>
+                    <span style={styles.userName}>{userName}</span>
+                    <span style={styles.userId}>ID:{userId}</span>
+                </div>
+                <div style={styles.infoRow}>
+                    <span style={styles.modeText}>{mode}</span>
+                    <span style={styles.scoreText}>{score}</span>
+                </div>
             </div>
 
             {combo  ? 
@@ -414,21 +416,6 @@ export default function MusicGamePage() {
                 </p> :
                 ''
             }
-
-            <p style={{
-                ...styles.introduction,
-                top:'8rem',
-                fontSize: '40px',
-            }}>{mode}</p>
-
-            <p style={{
-                ...styles.introduction,
-                top:'19rem',
-                left:'3rem',
-                fontSize:"36px",
-                fontWight:'bold',
-            }}>{score}</p>
-        
 
             <div style={styles.gameArea}>
                 <div style={outerCircleEffect ? { ...styles.outerCircle, boxShadow: '0 0 20px 10px #FFD700' } : styles.outerCircle}></div>
@@ -590,83 +577,123 @@ export default function MusicGamePage() {
 
 const styles = {
     background: {
-        width: '78rem',
-        height: '41rem',
+        position: 'fixed',
+        width: '100%',
+        height: '100vh',
         backgroundImage: 'url(/单人音游界面.png)',
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 100%',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         zIndex: '-1'
     },
     startButton: {
         position: 'absolute',
         top: '50%',
-        left: '50%',
-        transform: 'translate(-60%, -50%)',
-        padding: '10px 20px',
-        fontSize: '24px',
-        backgroundColor: ' rgb(252, 176, 179)',
+        left: '48%',
+        transform: 'translate(-50%, -50%)',
+        padding: 'clamp(0.5rem, 1.5vw, 1rem) clamp(1rem, 3vw, 2rem)',
+        fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
+        backgroundColor: 'rgb(252, 176, 179)',
         fontFamily: 'YouSheBiaoTiHei',
-        color:'white',
+        color: 'white',
         border: 'none',
-        borderRadius: '10px',
+        borderRadius: 'clamp(0.5rem, 1vw, 0.8rem)',
         cursor: 'pointer',
-        zIndex:'2'
+        zIndex: '2'
     },
     avatar: {
         position: 'absolute',
-        top: '1.4rem',
-        left: '2.5rem',
+        top: 'clamp(1rem, 3vh, 3rem)',
+        left: 'clamp(1rem, 3vw, 3rem)',
         display: 'block',
-        width: '5.7rem',
-        height: '4.1rem',
+        width: 'clamp(3rem, 6vw, 6rem)',
+        height: 'clamp(3rem, 6vw, 6rem)',
         borderRadius: '50%',
         zIndex: '1'
     },
     information: {
         position: 'absolute',
-        top: '1.5rem',
-        left: '10rem',
-        width: '16rem',
-        height: '4rem',
+        top: 'clamp(1rem, 3vh, 3rem)',
+        left: 'clamp(8rem, 12vw, 15rem)',
+        width: 'clamp(12rem, 25vw, 25rem)',
+        minHeight: 'clamp(3rem, 6vh, 6rem)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
+        border: '2px solid rgba(254, 155, 155, 0.7)',
+        borderRadius: 'clamp(0.5rem, 1vw, 1.2rem)',
+        background: 'linear-gradient(135deg, rgba(255, 240, 240, 0.3), rgba(255, 220, 220, 0.2))',
+        boxShadow: '0 4px 12px rgba(254, 155, 155, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
+        padding:'0.5rem',
+        color: 'rgba(255, 255, 255, 0.9)',
+    },
+    infoRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+    },
+    userName: {
+        fontFamily: 'YouSheBiaoTiHei',
+        fontSize: 'clamp(1rem, 1.8vw, 1.8rem)',
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+    },
+    userId: {
+        fontFamily: 'YouSheBiaoTiHei',
+        fontSize: 'clamp(0.8rem, 1.5vw, 1.5rem)',
+        color: '#FFFFFF',
+    },
+    modeText: {
+        fontFamily: 'YouSheBiaoTiHei',
+        fontSize: 'clamp(1rem, 2vw, 2rem)',
+        color: '#79E2FF',
+        width: '100%',
+        textAlign: 'center',
+    },
+    scoreText: {
+        fontFamily: 'YouSheBiaoTiHei',
+        fontSize: 'clamp(1.5rem, 3vw, 3rem)',
+        color: '#FF7676',
+        width: '100%',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
     },
     gameArea: {
         position: 'absolute',
-        top: '11rem',
-        width: '78rem',
-        height: '10rem',
+        top: 'clamp(13rem, 32vh, 30rem)',
+        width: '80vw',
+        maxWidth: '80rem',
+        height: 'clamp(5rem, 12vh, 12rem)',
         backgroundColor: 'transparent',
-        marginTop: '20px',
-        borderRadius: '10px',
-        overflow: 'hidden',
+        marginTop: 'clamp(1rem, 2vh, 2rem)',
+        borderRadius: 'clamp(0.5rem, 1vw, 1rem)',
     },
     outerCircle: {
         position: 'absolute',
-        left: '17.5rem',
+        left: '20vw',
         top: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '6rem',
-        height: '6rem',
+        width: 'clamp(3rem, 8vw, 8rem)',
+        height: 'clamp(3rem, 8vw, 8rem)',
         borderRadius: '50%',
-        border: '4px solid #FFD700',
+        border: 'clamp(0.2rem, 0.4vw, 0.4rem) solid #FFD700',
         transition: 'box-shadow 0.2s ease-in-out',
     },
     innerCircle: {
         position: 'absolute',
-        left: '17.5rem',
+        left: '20vw',
         top: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '4rem',
-        height: '4rem',
+        width: 'clamp(3rem, 6vw, 6rem)',
+        height: 'clamp(3rem, 6vw, 6rem)',
         borderRadius: '50%',
-        border: '4px solid #FFA500',
+        border: 'clamp(0.2rem, 0.4vw, 0.4rem) solid #FFA500',
     },
     note: {
-        width: '4rem',
-        height: '4rem',
+        width: 'clamp(3rem, 5vw, 5rem)',
+        height: 'clamp(3rem, 5vw, 5rem)',
         borderRadius: '50%',
         background: 'linear-gradient(145deg,rgb(252, 176, 179), #fad0c4)', 
         boxShadow: `
@@ -678,77 +705,73 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
-        fontSize: '30px',
+        fontSize: 'clamp(1rem, 2vw, 2rem)',
         color: 'rgb(17, 83, 252)', 
         fontWeight: 'bold',
         textShadow: '1px 1px 3px rgba(0, 0, 0, 0.3)', 
     },
     energyBarContainer: {
         position: 'absolute',
-        top: '10rem',
-        right: '0.5rem',
+        top: 'clamp(8rem, 23vh, 30rem)',
+        right: 'clamp(0.5rem, 1vw, 1rem)',
         width: '70%',
-        height: '20px',
+        height: 'clamp(0.8rem, 1.5vh, 1.5rem)',
         backgroundColor: '#ddd',
-        border: '6px solid white',
-        borderRadius: '10px',
+        border: 'clamp(0.2rem, 0.4vw, 0.4rem) solid white',
+        borderRadius: 'clamp(0.5rem, 1vw, 1rem)',
     },
     energyBar: {
         height: '100%',
-        background:'linear-gradient(90deg, #B3E3FF, #FFA7BA)',
-        borderRadius: '10px',
+        background: 'linear-gradient(90deg, #B3E3FF, #FFA7BA)',
+        borderRadius: 'clamp(0.5rem, 1vw, 1rem)',
     },
     feedback: {
         position: 'absolute',
-        left: '24%',
-        top: '25%',
+        left: '24vw',
+        top: 'clamp(8rem, 24vh, 30rem)',
         transform: 'translate(-50%, -50%)',
-        fontSize: '28px',
+        fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
         fontWeight: 'bold',
         animation: 'fade 0.5s',
     },
     p: {
         margin: '0',
-        paddingLeft: '16px',
+        paddingLeft: 'clamp(0.5rem, 1vw, 1rem)',
         alignItems: 'center',
         fontFamily: 'YouSheBiaoTiHei',
         fontWeight: 'normal',
         letterSpacing: '0em',
-        color: ' #FFFFFF',
+        color: '#FFFFFF',
+        fontSize: 'clamp(0.8rem, 1.5vw, 1.5rem)'
     },
     people: {
         position: 'absolute',
-        left: '35rem',
-        top: '21.5rem',
-        width: '20rem',
-        height: '18rem',
+        left: '45vw',
+        bottom:'5vw',
+        width: 'clamp(10rem, 25vw, 25rem)',
+        height: 'clamp(10rem, 40vh, 25rem)',
+        aspectRatio: '1/1',
     },
-    introduction:{
-        position:'absolute',
-        left:'3rem',
-        color:'#79E2FF',
-    },
-    combo:{
+    combo: {
         position: 'absolute',
-        top:'4rem',
-        color: ' #FF7676',
-        fontSize: '40px',
+        top: 'clamp(3rem, 8vh, 8rem)',
+        color: '#FF7676',
+        fontSize: 'clamp(1.5rem, 3vw, 3rem)',
         fontWeight: 'bold',
         textShadow: '-4px -4px 0 #FFEDED, 4px -4px 0 #FFEDED, -4px 4px 0 #FFEDED, 4px 4px 0 #FFEDED',
     },
     progressBarContainer: {
         position: 'absolute',
-        bottom: '1rem', 
-        left: '10rem',
+        bottom: 'clamp(0.5rem, 3vh, 1rem)', 
+        left: 'clamp(5rem, 10vw, 10rem)',
         width: '75%',
-        height: '10px',
-        backgroundColor: ' #ddd',
-        borderRadius: '5px',
+        height: 'clamp(0.5rem, 1vh, 1rem)',
+        backgroundColor: '#ddd',
+        borderRadius: 'clamp(0.2rem, 0.5vw, 0.5rem)',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: ' #00FF00',
-        borderRadius: '5px',
+        backgroundColor: '#00FF00',
+        borderRadius: 'clamp(0.2rem, 0.5vw, 0.5rem)',
     },
-    
 }

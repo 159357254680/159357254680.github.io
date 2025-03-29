@@ -67,6 +67,14 @@ export default function Setting({ path, src, ReturnComponent, backgroundColor, t
     const [carVolume, setCarVolume] = useState(localStorage.getItem("carVolume"))
     const [hitVolume, setHitVolume] = useState(localStorage.getItem("hitVolume"))
 
+
+    useEffect(() => {   
+        document.body.style.overflow = "hidden"
+    return () => {
+        document.body.style.overflow = "auto"
+    };
+  }, []);
+
     function handleCarBackgroundVolumeChange (e) {
         setCarBackgroundVolume(e.target.value)
     }
@@ -103,8 +111,8 @@ export default function Setting({ path, src, ReturnComponent, backgroundColor, t
         backgroundImage: {
             position: 'absolute',
             marginLeft:'-1rem',
-            width: '80rem',
-            height: '41rem',
+            width: '100%',
+            height: '100vh',
             zIndex: '-1',
         },
         location: {

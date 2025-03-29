@@ -10,8 +10,8 @@ export default function Ruler(){
                 src="/音游规则.png"
                 alt="规则"
                 style = {{
-                    width: "78rem",
-                    height: "40rem",
+                    width: "100%",
+                    height: "100vh",
                     objectFit: 'contain',
                 }}
             />

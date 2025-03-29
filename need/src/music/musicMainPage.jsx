@@ -7,15 +7,14 @@ export default function MusicMainPage() {
     const navigate = useNavigate()
 
     useEffect(() => {
-                document.body.style.overflow = "hidden"
-            return () => {
-                document.body.style.overflow = "auto"
-            }
+        document.body.style.overflow = "hidden"
+        return () => {
+            document.body.style.overflow = "auto"
+        }
     }, [])
 
     function Btn({ content, top, left, paddingRight, onClick }) {
         return (
-
            <>
                 <style>
                     {`
@@ -33,15 +32,12 @@ export default function MusicMainPage() {
                     `}
                 </style>
 
-                <Star />
-
                 <motion.button
                     style={{
                         ...styles.btn,
                         top: top,
                         left: left,
                         paddingRight: paddingRight,
-                       
                     }}
                     className="btn"
                     onClick={onClick}
@@ -59,11 +55,11 @@ export default function MusicMainPage() {
                         ease: "easeInOut", 
                     }}
                 >
-                        {content}
+                    {content}
                 </motion.button>
            </>
         )
-      }
+    }
 
     function navigateToPage(path) {
         navigate(path)
@@ -71,56 +67,60 @@ export default function MusicMainPage() {
 
     return (
         <>
-
-            <div
-                style={styles.setting}
-                onClick={() => navigate("/MusicSetting", { state: { path: "/MusicMainPage" } })}
-            />
             <img
                 src="/音游主页.png"
                 alt="音游主页"
                 style={styles.img}
             />
-            <img
-                src="/音游主页圆.png"
-                alt="音游主页圆"
-                style={{
-                    position: "absolute",
-                    top: "22%",
-                    left: "28%",
-                    width: "26rem",
-                    height: "26rem",
-                    zIndex: "3",
+            <motion.img
+                src="/粉设置.png"
+                style={styles.setting}
+                onClick={() => navigate("/MusicSetting", { state: { path: "/MusicMainPage" } })}
+                whileHover={{
+                    rotate: 360,
+                    transition: { duration: 1, ease: "linear", repeat: Infinity }
                 }}
             />
-            <Btn
-                content="PLAY"
-                top="30%"
-                left="47%"
-                paddingRight="1rem"
-                onClick={() => navigateToPage("/SelectMusic")}
-            />
-            <Btn
-                content="RANK"
-                top="42%"
-                left="50%"
-                paddingRight="1rem"
-                onClick={() => navigateToPage("/Ranking")}
-            />
-            <Btn
-                content="RULER"
-                top="54%"
-                left="50%"
-                paddingRight="0.5rem"
-                onClick={() => navigateToPage("/Ruler")}
-            />
-            <Btn
-                content="EXIT"
-                top="66%"
-                left="47%"
-                paddingRight="1rem"
-                onClick={() => navigateToPage("/MusicSelectPage")}
-            />
+
+            <Star />
+
+            <div style={styles.circleContainer}>
+                
+                <Btn
+                    content="PLAY"
+                    top="20%"
+                    left="47%"
+                    paddingRight="clamp(0.5rem, 1vw, 1rem)"
+                    onClick={() => navigateToPage("/SelectMusic")}
+                />
+                <Btn
+                    content="RANK"
+                    top="35%"
+                    left="55%"
+                    paddingRight="clamp(0.5rem, 1vw, 1rem)"
+                    onClick={() => navigateToPage("/Ranking")}
+                />
+                <Btn
+                    content="RULER"
+                    top="50%"
+                    left="55%"
+                    paddingRight="clamp(0.3rem, 0.8vw, 0.8rem)"
+                    onClick={() => navigateToPage("/Ruler")}
+                />
+                <Btn
+                    content="EXIT"
+                    top="65%"
+                    left="47%"
+                    paddingRight="clamp(0.5rem, 1vw, 1rem)"
+                    onClick={() => navigateToPage("/MusicSelectPage")}
+                />
+
+                <img
+                    src="/音游主页圆.png"
+                    alt="音游主页圆"
+                    style={styles.circle}
+                />
+            </div>
         </>
     )
 }
@@ -128,37 +128,47 @@ export default function MusicMainPage() {
 const styles = {
     setting: {
         position: "absolute",
-        right: "13rem",
-        width: "3.5rem",
-        height: "3.5rem",
+        top: 'clamp(0.5rem, 2vh, 2rem)',
+        right: 'clamp(0.5rem, 2vw, 2rem)',
+        width: "clamp(2rem, 5vw, 5rem)",
+        height: "clamp(2rem, 5vw, 5rem)",
         background: "transparent",
         cursor: "pointer",
         zIndex: "2",
     },
-
     img: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        maxWidth: "100%",
-        maxHeight: "100%",
-        objectFit: "contain",
+        position: 'fixed',
+        width: "100vw",
+        height: "100vh",
+        objectFit: 'cover',
     },
-
+    circleContainer: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 'clamp(15rem, 40vw, 40rem)',
+        height: 'clamp(15rem, 40vw, 40rem)',
+        aspectRatio: '1/1',
+    },
+    circle: {
+        position:'absolute',
+        width: '95%',
+        height: '95%',
+        objectFit: 'contain',
+    },
     btn: {
         position: "absolute",
-        width: "17rem",
-        height: "3.5rem",
+        width: 'clamp(10rem, 25vw, 25rem)',
+        height: 'clamp(2rem, 5vw, 5rem)',
         background:"linear-gradient(90deg, #FFD0D0 20%,  #FFB1D9 60%,  #DDF3FF 100%)",
-        borderRadius: "13px",
-        border: "4px solid #FFFFFF",
-        zIndex: "2",
+        borderRadius: "clamp(0.5rem, 1vw, 1rem)",
+        border: "clamp(0.2rem, 0.4vw, 0.4rem) solid #FFFFFF",
         textAlign: "right",
         fontFamily: "YouSheBiaoTiHei",
-        fontSize: "34px",
+        fontSize: "clamp(1rem, 2.5vw, 2.5rem)",
         color: "white",
-        letterSpacing: '0.5rem',
+        letterSpacing: 'clamp(0.2rem, 0.5vw, 0.5rem)',
         cursor: "pointer",
     },
 }

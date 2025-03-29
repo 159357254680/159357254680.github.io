@@ -18,6 +18,13 @@ export default function CarQuestionEdit() {
     const [inputTitle, setInputTitle] = useState('')
     const [currentView, setCurrentView] = useState('main') 
 
+    useEffect(() => {   
+            document.body.style.overflow = "hidden"
+        return () => {
+            document.body.style.overflow = "auto"
+        };
+    }, []);
+
     async function getServerTest() {
         try {
             setLoading(true)
@@ -258,24 +265,6 @@ export default function CarQuestionEdit() {
 
                 <CarReturn path={"/CarMainPage"} />
 
-                <div style={{
-                        display:selectedOption === 'option2' ? 'block': 'none',
-                        position:'absolute',
-                        top:'15.02rem',
-                        left:'10.3rem',
-                        width:'4rem',
-                        height:'4rem',
-                        background:' #4b97f7',
-                        borderRadius:'50%',
-                        zIndex:'1',
-                        cursor:'pointer',
-                }}
-                    onClick={() => {
-                        setCurrentView('sub')
-                        fetchTitles()
-                    }}
-                />
-
                 <div style={styles.radioGroup}>
                     <div style={styles.radioItem}>
                         <input
@@ -421,6 +410,23 @@ export default function CarQuestionEdit() {
                             style={styles.fileInput}
                         />
 
+                        <label htmlFor="fileInput" >
+                            <img 
+                                src="/本地上传.png"
+                                alt="点击上传文件"
+                                style={{
+                                    marginLeft:'1vw',
+                                    width:'12vw',
+                                    height:'8vw',
+                                    cursor: 'pointer',
+                                }}  
+                            />
+                        </label>
+
+                        <p style={{fontSize:'3rem', fontFamily: 'YouSheBiaoTiHei',}}>本地上传</p>
+
+
+
                         {showSubmitButton && (
                             <div style={styles.submitPopup}>
                                 <div style={styles.popupContent}>
@@ -466,8 +472,8 @@ const styles = {
     },
     backgroundImage: {
         position: 'absolute',
-        width: '79rem',
-        height: '41rem',
+        width: '100%',
+        height: '100vh',
         zIndex: '-1',
     },
     radioGroup: {
@@ -537,8 +543,7 @@ const styles = {
         marginLeft: '8rem',
         width: '9rem',
         height: '5.5rem',
-        opacity: '0',
-        cursor: 'pointer',
+        display:'none'
     },
     submitPopup: {
         position: 'fixed',
@@ -584,8 +589,8 @@ const styles = {
         position: 'fixed',
         left: '0',
         top: '0',
-        width: '79rem',
-        height: '41rem',
+        width: '100%',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -641,9 +646,6 @@ const styles = {
         cursor: 'pointer',
         padding: '0.5rem 1rem',
         transition: 'all 0.2s ease',
-        '&:hover': {
-            transform: 'translateX(-5px)'
-        }
     },
     subOption: {
         padding: '1rem 2rem',
@@ -657,10 +659,6 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         gap: '1rem',
-        '&:hover': {
-            transform: 'scale(1.05)',
-            boxShadow: '0 4px 15px rgba(26, 180, 255, 0.4)'
-        }
     },
     inputGroup: {
         display: 'flex',
@@ -675,9 +673,6 @@ const styles = {
         fontSize: '1rem',
         outline: 'none',
         transition: 'all 0.3s ease',
-        '&:focus': {
-            boxShadow: '0 0 8px rgba(26, 180, 255, 0.3)'
-        }
     },
     searchButton: {
         padding: '0.8rem 2rem',

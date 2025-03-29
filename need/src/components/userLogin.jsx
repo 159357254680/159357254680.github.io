@@ -91,7 +91,6 @@ export default function UserLogin() {
         }
     } 
 
-    
 
     function register() {
         sessionStorage.setItem('fromRegister', 'true') 
@@ -106,8 +105,8 @@ export default function UserLogin() {
                         style={{
                             position: 'absolute',
                             background: 'rgb(184, 225, 249)',
-                            width: '79rem',
-                            height: '41rem',
+                            width: '100%',
+                            height: '100vh',
                             zIndex: '2',
                             transition: 'transform 1s  ease-out',
                             opacity: 1, 
@@ -194,8 +193,8 @@ export default function UserLogin() {
 const styles = {
     container: {
         position: 'relative',
-        width: '79rem',
-        height: '41rem',
+        width: '100%',
+        height: '100vh',
         marginLeft: '0',
         overflow: 'hidden',
         background: 'rgb(201, 201, 201)',
@@ -229,3 +228,4 @@ const styles = {
         borderRadius: '3px',
     },
 }
+

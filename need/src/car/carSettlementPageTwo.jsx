@@ -97,22 +97,25 @@ export default function CarettlementPageTwo() {
 
         return(
             <div style={styles.userContainer}>
-            <div style={styles.infoRow}>
-                <label>用户名：</label>
-                <span>{userName || '连接失败...'}</span>
-            </div>
-            <div style={styles.infoRow}>
-                <label>id:</label>
-                <span>{userId || '连接失败...'}</span>
-            </div>
-            <div style={styles.gameInfo}>
-                <label>player:</label>
-                <span>{role||'连接失败...'}</span>
-            </div>
-            <div style={styles.gameInfo}>
-                <label>总分:</label>
-                <span>{score||'连接失败...'}</span>
-            </div>
+                <div style={styles.userInfoContainer}>
+                    <div style={styles.infoRow}>
+                        <label>用户名：</label>
+                        <span>{userName || '连接失败...'}</span>
+                    </div>
+                    <div style={styles.infoRow}>
+                        <label>id:</label>
+                        <span>{userId || '连接失败...'}</span>
+                    </div>
+                </div>
+
+                <div style={styles.gameInfo}>
+                    <label>player:</label>
+                    <span>{role||'连接失败...'}</span>
+                </div>
+                <div style={styles.gameInfo}>
+                    <label>总分:</label>
+                    <span>{score||'连接失败...'}</span>
+                </div>
         </div>
         )
       }
@@ -197,5 +200,20 @@ const styles = {
         border: 'none',
         outline:'none',
         cursor:'pointer',
+    },
+    userInfoContainer:{
+        width: 'min(40vw, 18rem)',
+        height: 'min(10vw, 4rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        background: 'rgba(223, 218, 218, 0.4)', 
+        borderRadius: '20px',
+        padding: '0 2rem',
+        backdropFilter: 'blur(6px)', 
+        borderImage: `linear-gradient(145deg, 
+                      rgba(255,255,255,0.3),  
+                      transparent) 1`,
+        borderImageSlice: 1,
     }
 }

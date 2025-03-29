@@ -17,6 +17,13 @@ export default function Ranking(){
     const scrollPosition = useRef(0)  
 
     useEffect(() => {
+        document.body.style.overflow = "hidden"
+        return () => {
+            document.body.style.overflow = "auto"
+        }
+    }, [])
+
+    useEffect(() => {
         axios.get(
             'http://123.56.118.201:8080/api/all_songs',
             {
@@ -206,7 +213,6 @@ export default function Ranking(){
                 <div 
                     style={{
                         ...styles.background,
-                        height:'10rem',
                         backgroundColor:' #FFA7BA',
                         textAlign:'center',
                         fontFamily: 'yixinqingcuiti',
@@ -222,7 +228,8 @@ export default function Ranking(){
                 <div style={{
                     ...styles.background,
                     top:'10rem',
-                    height:'31.5rem',
+                    width:'50%',
+                    height:'100vh',
                     background:'linear-gradient(180deg, #FFD0D0 10%,rgb(251, 149, 202) 50%,#FFD0D0 60%,#FFD0D0 100%  )'
                 }}>
                      <Rank rankingData={rankingData} />
@@ -236,15 +243,17 @@ export default function Ranking(){
 const styles = {
         backgroundImage:{
             position:'absolute',
-            width:'78rem',
-            height:'41rem',
+            width:'110%',
+            height:'100vh',
             zIndex:'-1',
         },
         background:{
             position:'absolute',
-            left:'37.75rem',
-            width:'41.5rem',
+            right:'0',
+            width:'50%',
+            height:'100vh',
             zIndex:'0',
+            overflow:'hidden'
         },
         searach:{
             paddingLeft:'1rem',
@@ -263,8 +272,8 @@ const styles = {
             position: 'absolute',
             top: '6rem',
             left: '5rem',
-            width: '30rem',
-            height: '32rem',
+            width: '35vw',
+            height: '80vh',
             overflowY: 'scroll',
             scrollbarWidth: 'none', 
             background: 'rgba(0, 0, 0, 0)', 

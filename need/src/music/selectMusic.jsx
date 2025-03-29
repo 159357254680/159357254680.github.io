@@ -1,4 +1,3 @@
-
 import { useState, useRef,useLayoutEffect,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -17,9 +16,6 @@ export default function SelectMusic() {
     const navigate = useNavigate()
     const listRef = useRef(null)
     const scrollPositionRef = useRef(0)
-
-    
-    
 
     useEffect(() => {
             document.body.style.overflow = "hidden" 
@@ -116,7 +112,7 @@ export default function SelectMusic() {
        
         return (
             <div style={styles.scrollContainer}>
-                <button style={{ ...styles.scrollButton, left: '-3rem' }} onClick={() => {scrollList('left')}} >
+                <button style={{ ...styles.scrollButton, left: '0' }} onClick={() => {scrollList('left')}} >
                     ◀
                 </button>
                 <div style={styles.listWrapper} ref={listRef}>
@@ -144,13 +140,13 @@ export default function SelectMusic() {
                                             <div style={{
                                                 display:'flex',
                                                 flexDirection:'column',
-                                                gap:'8px'
+                                                gap:'0.5vw'
                                             }}>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
                                             </div>
                                         </div>
                                     </div>
@@ -170,13 +166,13 @@ export default function SelectMusic() {
                                             <div style={{
                                                 display:'flex',
                                                 flexDirection:'column',
-                                                gap:'8px'
+                                                gap:'0.5vw'
                                             }}>
-                                                <img src='/淡星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
+                                                <img src='/淡星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
                                             </div>
                                         </div>
                                     </div>
@@ -197,19 +193,19 @@ export default function SelectMusic() {
                                             <div style={{
                                                 display:'flex',
                                                 flexDirection:'column',
-                                                gap:'8px'
+                                                gap:'0.5vw',
                                             }}>
-                                                <img src='/淡星.png' alt='star'/>
-                                                <img src='/淡星.png' alt='star'/>
-                                                <img src='/淡星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
-                                                <img src='/亮星.png' alt='star'/>
+                                                <img src='/淡星.png' alt='star' style={styles.star}/>
+                                                <img src='/淡星.png' alt='star' style={styles.star}/>
+                                                <img src='/淡星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
+                                                <img src='/亮星.png' alt='star' style={styles.star}/>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <p style={{...styles.selectedItemP,fontSize:'20px'}}>{data.id}</p>
-                                    <p style={{...styles.selectedItemP,fontSize:'24px'}}>{data.title}</p>
+                                    <p style={{...styles.selectedItemP,fontSize:'1.5vw'}}>{data.id}</p>
+                                    <p style={{...styles.selectedItemP,fontSize:'1.8vw'}}>{data.title}</p>
                                 </div>
                             )
                         } else {
@@ -220,20 +216,18 @@ export default function SelectMusic() {
                                     style={styles.item}
                                     onClick={() => setIsPointed(index === isPointed ? null : index)} 
                                 >
-                                    <p>{data.title}</p>
+                                    <p style={styles.itemText}>{data.title}</p>
                                 </div>
                             )
                         }
                     })}
                 </div>
-                <button style={{ ...styles.scrollButton, right: '-5rem' }} onClick={() => {scrollList('right')}}>
+                <button style={{ ...styles.scrollButton, right: '0' }} onClick={() => {scrollList('right')}}>
                     ▶
                 </button>
             </div>
         )
     }
-
-    
 
     return (
         <>
@@ -257,8 +251,6 @@ export default function SelectMusic() {
                 }}
                 onKeyDown={handleKeyDown}
             />
-
-
 
             {searchValue !== ''&&filteredMusic !== songList && ( 
                 <ul style={styles.suggestionsList}>
@@ -289,6 +281,7 @@ export default function SelectMusic() {
             <button
                  style={{ 
                     ...styles.modeButton, 
+                    left: '0',
                     background: isSingle ? '#FF7898' : '#FFE4E4',
                 }}
                 onMouseEnter={() => setIsSingle(true)}
@@ -299,12 +292,11 @@ export default function SelectMusic() {
             <button
                 style={{ 
                     ...styles.modeButton, 
-                    left: '49.5%', 
+                    left: '50%', 
                     background: isSingle ? '#FFE4E4' : '#FF7898',
                 }}
                 onMouseEnter={() => setIsSingle(false)}
                 onClick={() =>navigate("/Wait")}
-
             >
                 双  人  游  戏
             </button>
@@ -314,28 +306,43 @@ export default function SelectMusic() {
 
 const styles = {
     backgroundImage: {
-        width: '78rem',
-        height: '41rem',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        objectFit: 'cover',
+        zIndex: -1
     },
     search: {
-        paddingLeft: '2rem',
         position: 'absolute',
-        top: '2rem',
-        left: '30rem',
-        width: '20rem',
-        height: '3rem',
+        top: '5%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '30vw',
+        minWidth: '200px',
+        maxWidth: '400px',
+        height: '5vh',
+        minHeight: '30px',
+        maxHeight: '50px',
+        paddingLeft: '2vw',
         background: '#FFD1D1',
         borderRadius: '18px',
         outline: 'none',
         border: 'none',
-        color:'white'
+        color: 'white',
+        fontSize: '1.2vw',
+        zIndex: 10
     },
     suggestionsList: {
         position: 'absolute',
-        top: '5rem',
-        left: '30rem',
-        width: '20rem',
-        maxHeight: '10rem', 
+        top: '10%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '30vw',
+        minWidth: '200px',
+        maxWidth: '400px',
+        maxHeight: '20vh', 
         overflowY: 'auto',
         background: ' #F5DBDB',
         border: '1px solid #DDD',
@@ -349,35 +356,36 @@ const styles = {
         cursor: 'pointer',
         color: ' #333',
         borderBottom: '1px solid #DDD', 
-        transition: 'background-color 0.1s ease', 
-    },
-    suggestionItemLast: {
-        borderBottom: 'none', 
+        transition: 'background-color 0.1s ease',
+        fontSize: '1.2vw'
     },
     scrollContainer: {
         position: 'absolute',
-        top: '8rem',
-        left: '6rem',
+        top: '30vh',
+        left: '50%',
+        transform: 'translateX(-50%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '4rem',
-        width: '80%',
-        marginLeft: 'auto',
-        marginRight: 'auto',
+        width: '90vw',
+        maxWidth: '1200px',
+        margin: '0 auto',
     },
     listWrapper: {
         display: 'flex',
         overflowX: 'auto',
         scrollBehavior: 'smooth',
-        gap: '1rem',
-        width: '60rem',
-        padding: '0 2rem',
+        gap: '1vw',
+        width: '80vw',
+        maxWidth: '1000px',
+        padding: '0 2vw',
         scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
     },
     item: {
-        flex: '0 0 1.5rem',
-        height: '15rem',
+        flex: '0 0 2vw',
+        height: '38vh',
+        maxHeight: '300px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -392,48 +400,60 @@ const styles = {
         color: 'white',
         cursor: 'pointer',
     },
+    itemText: {
+        fontSize: '1.5rem',
+        margin: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+    },
     selectedItem: {
         display: 'flex',
         justifyContent:'space-between',
         alignItems:'center',
-        height: '16rem',
+        height: '38vh',
+        maxHeight: '300px',
         color:'white', 
         boxShadow:'-6px 6px 5px rgb(251, 117, 130)',
         borderRadius: '20px',
         background:'linear-gradient(90deg, #FFE7EA 0%,  #FFB3B3 40%, #FF949F 100%)',
     },
     selectedItemP: {
-        marginRight:'10px',
-        width:'25px',
+        width: '2vw',
         display: 'flex',
-        flexDirection:'column',  
+        flexDirection: 'column',  
         fontFamily: 'YouSheBiaoTiHei',
     },
     scrollButton: {
         background: '#FFD1D1',
         border: 'none',
         borderRadius: '50%',
-        width: '3rem',
-        height: '3rem',
+        width: '3vw',
+        minWidth: '30px',
+        maxWidth: '50px',
+        height: '3vw',
+        minHeight: '30px',
+        maxHeight: '50px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '1.5rem',
+        fontSize: '1.5vw',
         cursor: 'pointer',
         position: 'absolute',
         zIndex: 2,
     },
     modeButton: {
-        position: 'absolute',
-        bottom: '0.6rem',
-        width: '49.3%',
-        height: '20%',
+        position: 'fixed',
+        bottom: '0',
+        width: '50%',
+        height: '8vh',
+        minHeight: '125px',
         background: ' #FFE4E4',
-        border: '8px solid rgb(253, 242, 242)',
+        border: '0.5vw solid rgb(253, 242, 242)',
         borderRadius: '12px 12px 0 0',
         outline: 'none',
         fontFamily: 'YouSheBiaoTiHei',
-        fontSize: '36px',
+        fontSize: '2vw',
         fontWeight: 'normal',
         lineHeight: 'normal',
         color: 'white',
@@ -452,13 +472,20 @@ const styles = {
         background:'linear-gradient(180deg, #DDF3FF 0%, #FFC6CD 100%)',
         cursor:'pointer',
     },
-    span:{
+    span: {
         fontFamily: 'YouSheBiaoTiHei',
-        fontSize: '20px',
+        fontSize: '1.5rem',
         fontWeight: 'normal',
         lineHeight: 'normal',
         letterSpacing: '0.3em',
-        cursor:'pointer',
+        cursor: 'pointer',
+        textAlign: 'center',
+        marginBottom: '0.5vw'
+    },
+    star: {
+        width: '1.5vw',
+        minWidth: '15px',
+        maxWidth: '25px',
+        height: 'auto'
     }
-    
 }

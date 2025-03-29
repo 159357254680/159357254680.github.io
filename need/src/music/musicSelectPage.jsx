@@ -13,8 +13,10 @@ export default function MusicSelectPage(){
                 main={"/MusicMainPage"}
                 userInterface={"/UserInterfaceMusic"}
                 iTop={'2.4rem'}
-                iLeft={'4.9rem'}/>
-                
+                iLeft={'4.9rem'}
+                settingImg = {"/粉设置.png"}
+                color={"#FB68B3"}
+                />
         </>
     )
 }
