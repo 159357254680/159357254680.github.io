@@ -19,12 +19,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"159357254680.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http地复数，而是在http的基础上进行了加密工作，具体在后文进行介">
+    <meta name="description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介">
 <meta property="og:type" content="article">
 <meta property="og:title" content="http与WebSocket">
 <meta property="og:url" content="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/index.html">
 <meta property="og:site_name" content="blog">
-<meta property="og:description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http地复数，而是在http的基础上进行了加密工作，具体在后文进行介">
+<meta property="og:description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://th.bing.com/th/id/OIP.YZt-rVLQzDPDZNIff5QXlAHaE6?w=242&h=180&c=7&r=0&o=5&dpr=2&pid=1.7">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/02dac5e6e5044a8d9a1e663ec55d8abe.png">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/183f18213593408bb7c612a2175ea749.png#pic_center">
 <meta property="og:image" content="https://tse3-mm.cn.bing.net/th/id/OIP-C.zVPHvJOfM7m8jlks8SFpHwAAAA?rs=1&pid=ImgDetMain">
 <meta property="article:published_time" content="2025-03-17T11:34:58.000Z">
-<meta property="article:modified_time" content="2025-03-23T05:02:23.852Z">
+<meta property="article:modified_time" content="2025-03-23T06:50:38.310Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="无">
 <meta name="twitter:card" content="summary">
@@ -124,12 +124,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -192,7 +192,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-23 13:02:23" itemprop="dateModified" datetime="2025-03-23T13:02:23+08:00">2025-03-23</time>
+      <time title="Modified: 2025-03-23 14:50:38" itemprop="dateModified" datetime="2025-03-23T14:50:38+08:00">2025-03-23</time>
     </span>
 
   
@@ -205,7 +205,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h1 id="1-http"><a href="#1-http" class="headerlink" title="1. http"></a>1. http</h1><h2 id="1-1-什么是http："><a href="#1-1-什么是http：" class="headerlink" title="1.1 什么是http："></a>1.1 什么是http：</h2><p>​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。</p>
-<p><strong>附</strong>：除了http，我们经常能够看见https。https不是http地复数，而是在http的基础上进行了加密工作，具体在后文进行介绍。</p>
+<p><strong>附</strong>：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介绍。</p>
 <h2 id="1-2-http如何工作："><a href="#1-2-http如何工作：" class="headerlink" title="1.2 http如何工作："></a>1.2 http如何工作：</h2><p>​	在浏览器的上方，有一个地址栏。如果我们在其中输入一个URL,浏览器就会给对应的服务器发送一个http请求，当服务器收到这个请求之后，就会进行处理，然后返回一个http响应。那么，具体的过程是怎样的呢？</p>
 <ol>
 <li><strong>建立连接</strong>：客户端（如Web浏览器）与服务器建立连接。这个连接是通过TCP协议完成的，期间经过了三次握手。HTTP协议是短连接的，每次请求都需要建立一个新的连接。（http&#x2F;1.1后又引入了持久连接Keep-Alive，通过复用TCP连接来发送多个http请求和接受多个响应）</li>
@@ -543,7 +543,7 @@
 <p>​	<strong>WebSocket 构造函数：</strong> WebSocket 构造函数用于创建 WebSocket 对象。它接受一个 URL 作为参数，表示要连接的 WebSocket 服务器的地址。例如：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> ws = <span class="keyword">new</span> WebSocket(<span class="string">&#x27;ws://example.com/ws&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<p><strong>WebSocket.send() 方法：</strong> <code>WebSocket.send()</code> 方法用于向服务器发送数据。它接受一个参数，表示要发送的数据。数据可以是字符串、Blob 对象或 ArrayBuffer 对象（常用于处理二进制）。例如：</p>
+<p>​	<strong>WebSocket.send() 方法：</strong> <code>WebSocket.send()</code> 方法用于向服务器发送数据。它接受一个参数，表示要发送的数据。数据可以是字符串、Blob 对象或 ArrayBuffer 对象（常用于处理二进制）。例如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ws.send(&#x27;Hello, server!&#x27;);</span><br></pre></td></tr></table></figure>
 
 <p>​	<strong>WebSocket.onopen 事件：</strong> <code>WebSocket.onopen</code> 事件在 WebSocket 连接成功建立时触发。例如：</p>
@@ -723,6 +723,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2025/04/16/zustand/" rel="next" title="zustand">
+                  zustand <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
