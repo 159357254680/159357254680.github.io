@@ -1,210 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="John Doe"><meta name="renderer" content="webkit"><meta name="copyright" content="John Doe"><meta name="keywords" content="blog"><meta name="description" content=""><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>http与WebSocket · Mr.Long's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
 
-<link rel="stylesheet" href="/css/main.css">
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
 
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
 
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"159357254680.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
 
-    <meta name="description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介">
-<meta property="og:type" content="article">
-<meta property="og:title" content="http与WebSocket">
-<meta property="og:url" content="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/index.html">
-<meta property="og:site_name" content="blog">
-<meta property="og:description" content="1. http1.1 什么是http：​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。 附：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://th.bing.com/th/id/OIP.YZt-rVLQzDPDZNIff5QXlAHaE6?w=242&h=180&c=7&r=0&o=5&dpr=2&pid=1.7">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/02dac5e6e5044a8d9a1e663ec55d8abe.png">
-<meta property="og:image" content="https://img2020.cnblogs.com/blog/1430250/202010/1430250-20201007103219405-319114234.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/183f18213593408bb7c612a2175ea749.png#pic_center">
-<meta property="og:image" content="https://tse3-mm.cn.bing.net/th/id/OIP-C.zVPHvJOfM7m8jlks8SFpHwAAAA?rs=1&pid=ImgDetMain">
-<meta property="article:published_time" content="2025-03-17T11:34:58.000Z">
-<meta property="article:modified_time" content="2025-03-23T06:50:38.310Z">
-<meta property="article:author" content="John Doe">
-<meta property="article:tag" content="无">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://th.bing.com/th/id/OIP.YZt-rVLQzDPDZNIff5QXlAHaE6?w=242&h=180&c=7&r=0&o=5&dpr=2&pid=1.7">
-
-
-<link rel="canonical" href="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/">
-
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/","path":"2025/03/17/http与WebSocket/","title":"http与WebSocket"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>http与WebSocket | blog</title>
-  
-
-
-
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">blog</p>
-      <i class="logo-line"></i>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-    </div>
-  </div>
-</div>
-
-
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
 
 
-
-
-
-</header>
-        
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-http"><span class="nav-number">1.</span> <span class="nav-text">1. http</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AFhttp%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 什么是http：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-http%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 http如何工作：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%80%E5%8F%91%E5%A4%9A%E6%94%B6%EF%BC%88%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%A4%9A%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="nav-number">1.2.0.0.0.1.</span> <span class="nav-text">一发多收（一个请求，多个响应）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%9A%E5%8F%91%E4%B8%80%E6%94%B6%EF%BC%88%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E4%B8%80%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="nav-number">1.2.0.0.0.2.</span> <span class="nav-text">多发一收（多个请求，一个响应）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%9A%E5%8F%91%E5%A4%9A%E6%94%B6%EF%BC%88%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%A4%9A%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="nav-number">1.2.0.0.0.3.</span> <span class="nav-text">多发多收（多个请求，多个响应）</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-http%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 http的方法：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-GET"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. GET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-POST"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. POST</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-PUT"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. PUT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-DELETE"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. DELETE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-HEAD"><span class="nav-number">1.3.5.</span> <span class="nav-text">5. HEAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-OPTIONS"><span class="nav-number">1.3.6.</span> <span class="nav-text">6. OPTIONS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-TRACE"><span class="nav-number">1.3.7.</span> <span class="nav-text">7. TRACE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-CONNECT"><span class="nav-number">1.3.8.</span> <span class="nav-text">8. CONNECT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-http%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 http的状态码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-http%E7%9A%84%E4%B8%8D%E8%B6%B3%EF%BC%9A"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 http的不足：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%97%A0%E7%8A%B6%E6%80%81%E6%80%A7"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.无状态性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.2.</span> <span class="nav-text">2.安全问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A4%B4%E9%83%A8%E5%86%97%E4%BD%99"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 头部冗余</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%8D%E6%94%AF%E6%8C%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81"><span class="nav-number">1.5.4.</span> <span class="nav-text">4. 不支持服务器推送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.5.</span> <span class="nav-text">5. 性能问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-WebSocket"><span class="nav-number">2.</span> <span class="nav-text">2. WebSocket</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-WebSocket"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 WebSocket</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-WebSocket%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 WebSocket的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3WebSocket%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">2.3WebSocket的工作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">连接建立阶段：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BC%80%E6%94%BE%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="nav-number">2.3.0.2.</span> <span class="nav-text">连接开放阶段：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="nav-number">2.3.0.3.</span> <span class="nav-text">连接关闭阶段：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E5%AE%8C%E6%88%90%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="nav-number">2.3.0.4.</span> <span class="nav-text">连接关闭完成阶段：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-WebSocket%E7%9A%84API"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 WebSocket的API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-WebSocket%E7%9A%84%E4%B8%8D%E8%B6%B3"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 WebSocket的不足</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-WebSokcet%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 WebSokcet的应用场景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">附录：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie%EF%BC%8CSession%E5%92%8CToken%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">Cookie，Session和Token：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ECookie%EF%BC%9A"><span class="nav-number">3.1.1.</span> <span class="nav-text">关于Cookie：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ESession%EF%BC%9A"><span class="nav-number">3.1.2.</span> <span class="nav-text">关于Session：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EToken%EF%BC%9A"><span class="nav-number">3.1.3.</span> <span class="nav-text">关于Token：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">3.1.4.</span> <span class="nav-text">区别：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https%EF%BC%9A"><span class="nav-number">3.2.</span> <span class="nav-text">https：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFhttps%EF%BC%9A"><span class="nav-number">3.2.1.</span> <span class="nav-text">什么是https：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8A%A0%E5%AF%86%E4%BC%A0%E8%BE%93"><span class="nav-number">3.2.2.</span> <span class="nav-text">1. 加密传输</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%9C%BA%E5%88%B6%EF%BC%9A"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">加密机制：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="nav-number">3.2.2.1.1.</span> <span class="nav-text">共享密钥加密：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="nav-number">3.2.2.1.2.</span> <span class="nav-text">公开密钥加密：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="nav-number">3.2.2.1.3.</span> <span class="nav-text">混合密钥加密：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-number">3.2.3.</span> <span class="nav-text">2. 数据完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E4%BF%9D%E6%8A%A4%EF%BC%9A"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">完整性保护：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81%EF%BC%88MAC%EF%BC%89"><span class="nav-number">3.2.3.1.1.</span> <span class="nav-text">消息认证码（MAC）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">3.2.3.1.2.</span> <span class="nav-text">数字签名</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="nav-number">3.2.4.</span> <span class="nav-text">3. 身份认证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%9A"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">数字证书：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84%EF%BC%88CA%EF%BC%89"><span class="nav-number">3.2.4.1.1.</span> <span class="nav-text">证书颁发机构（CA）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E5%86%85%E5%AE%B9"><span class="nav-number">3.2.4.1.2.</span> <span class="nav-text">数字证书内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.4.1.3.</span> <span class="nav-text">证书验证流程</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GET%E5%92%8CPOST%EF%BC%9A"><span class="nav-number">3.3.</span> <span class="nav-text">GET和POST：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GET%E4%B8%8EPOST%E7%9A%84%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">3.3.1.</span> <span class="nav-text">GET与POST的一些区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GET%E5%92%8CPOST%E7%9A%84%E8%81%8C%E8%83%BD%EF%BC%9A"><span class="nav-number">3.3.2.</span> <span class="nav-text">GET和POST的职能：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EGET%E8%AF%B7%E6%B1%82%E7%9A%84URL%E9%95%BF%E5%BA%A6%EF%BC%9A"><span class="nav-number">3.3.3.</span> <span class="nav-text">关于GET请求的URL长度：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EPOST%E6%AF%94GET%E6%9B%B4%E5%8A%A0%E5%AE%89%E5%85%A8%EF%BC%9A"><span class="nav-number">3.3.4.</span> <span class="nav-text">关于POST比GET更加安全：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket-IO"><span class="nav-number">3.4.</span> <span class="nav-text">Socket.IO:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSocket-IO"><span class="nav-number">3.4.1.</span> <span class="nav-text">什么是Socket.IO:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Socket-IO%E7%9A%84%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">3.4.2.</span> <span class="nav-text">Socket.IO的优点：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7%E6%9B%B4%E5%A5%BD"><span class="nav-number">3.4.2.1.</span> <span class="nav-text">兼容性更好</span></a></li></ol></li></ol></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">8</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="http与WebSocket | blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          http与WebSocket
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-03-17 19:34:58" itemprop="dateCreated datePublished" datetime="2025-03-17T19:34:58+08:00">2025-03-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-03-23 14:50:38" itemprop="dateModified" datetime="2025-03-23T14:50:38+08:00">2025-03-23</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="1-http"><a href="#1-http" class="headerlink" title="1. http"></a>1. http</h1><h2 id="1-1-什么是http："><a href="#1-1-什么是http：" class="headerlink" title="1.1 什么是http："></a>1.1 什么是http：</h2><p>​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。</p>
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 7.3.0"></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">longlongyu</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Long's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">http与WebSocket</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2025-03-17</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="无"> 无</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h1 id="1-http"><a href="#1-http" class="headerlink" title="1. http"></a>1. http</h1><h2 id="1-1-什么是http："><a href="#1-1-什么是http：" class="headerlink" title="1.1 什么是http："></a>1.1 什么是http：</h2><p>​	http，即超文本传输协议，是TCP&#x2F;IP协议集中的一个应用层协议，是客户端与服务端进行交互时必须遵循的规则。它用于Web浏览器与Web服务器之间交换数据的过程以及数据本身的格式，底层则是靠TCP进行可靠地信息传输。</p>
 <p><strong>附</strong>：除了http，我们经常能够看见https。https不是http的复数，而是在http的基础上进行了加密工作，具体在后文进行介绍。</p>
 <h2 id="1-2-http如何工作："><a href="#1-2-http如何工作：" class="headerlink" title="1.2 http如何工作："></a>1.2 http如何工作：</h2><p>​	在浏览器的上方，有一个地址栏。如果我们在其中输入一个URL,浏览器就会给对应的服务器发送一个http请求，当服务器收到这个请求之后，就会进行处理，然后返回一个http响应。那么，具体的过程是怎样的呢？</p>
 <ol>
@@ -702,94 +595,4 @@
 <p>引入之后，就可以通过Socket.IO建立WebSocket通信了，如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> socket = <span class="title function_">io</span>(<span class="string">&quot;http://localhost:3000&quot;</span>); <span class="comment">//连接服务器</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">on</span>(<span class="string">&quot;message&quot;</span>, <span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;收到服务器消息:&quot;</span>, data);</span><br><span class="line">&#125;) <span class="comment">//监听服务器事件</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">emit</span>(<span class="string">&quot;chatMessage&quot;</span>, <span class="string">&quot;你好，服务器！&quot;</span>)<span class="comment">//发送事件到服务器</span></span><br><span class="line"></span><br><span class="line">socket.<span class="title function_">disconnect</span>()<span class="comment">//断开连接</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%97%A0/" rel="tag"># 无</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/" rel="prev" title="闭包，垃圾回收和内存泄露">
-                  <i class="fa fa-angle-left"></i> 闭包，垃圾回收和内存泄露
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/04/16/zustand/" rel="next" title="zustand">
-                  zustand <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">John Doe</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
-    </div>
-  </footer>
-
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-</body>
-</html>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://159357254680.github.io">John Doe</a></p><p> <span>Link:  </span><a href="https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/">https://159357254680.github.io/2025/03/17/http%E4%B8%8EWebSocket/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2025/04/16/zustand/" title="zustand"><span>< PreviousPost</span><br><span class="prevTitle">zustand</span></a><a class="nextSlogan" href="/2025/02/18/%E9%97%AD%E5%8C%85,%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/" title="闭包，垃圾回收和内存泄露"><span>NextPost ></span><br><span class="nextTitle">闭包，垃圾回收和内存泄露</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-http"><span class="toc-number">1.</span> <span class="toc-text">1. http</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AFhttp%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 什么是http：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-http%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 http如何工作：</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%B8%80%E5%8F%91%E5%A4%9A%E6%94%B6%EF%BC%88%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%A4%9A%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="toc-number">1.2.0.0.0.1.</span> <span class="toc-text">一发多收（一个请求，多个响应）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%A4%9A%E5%8F%91%E4%B8%80%E6%94%B6%EF%BC%88%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E4%B8%80%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="toc-number">1.2.0.0.0.2.</span> <span class="toc-text">多发一收（多个请求，一个响应）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%A4%9A%E5%8F%91%E5%A4%9A%E6%94%B6%EF%BC%88%E5%A4%9A%E4%B8%AA%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%A4%9A%E4%B8%AA%E5%93%8D%E5%BA%94%EF%BC%89"><span class="toc-number">1.2.0.0.0.3.</span> <span class="toc-text">多发多收（多个请求，多个响应）</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-http%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 http的方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-GET"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. GET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-POST"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. POST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-PUT"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. PUT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-DELETE"><span class="toc-number">1.3.4.</span> <span class="toc-text">4. DELETE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-HEAD"><span class="toc-number">1.3.5.</span> <span class="toc-text">5. HEAD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-OPTIONS"><span class="toc-number">1.3.6.</span> <span class="toc-text">6. OPTIONS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-TRACE"><span class="toc-number">1.3.7.</span> <span class="toc-text">7. TRACE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-CONNECT"><span class="toc-number">1.3.8.</span> <span class="toc-text">8. CONNECT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-http%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 http的状态码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-http%E7%9A%84%E4%B8%8D%E8%B6%B3%EF%BC%9A"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 http的不足：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%97%A0%E7%8A%B6%E6%80%81%E6%80%A7"><span class="toc-number">1.5.1.</span> <span class="toc-text">1.无状态性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">1.5.2.</span> <span class="toc-text">2.安全问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%A4%B4%E9%83%A8%E5%86%97%E4%BD%99"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 头部冗余</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%8D%E6%94%AF%E6%8C%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81"><span class="toc-number">1.5.4.</span> <span class="toc-text">4. 不支持服务器推送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="toc-number">1.5.5.</span> <span class="toc-text">5. 性能问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-WebSocket"><span class="toc-number">2.</span> <span class="toc-text">2. WebSocket</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-WebSocket"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 WebSocket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-WebSocket%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 WebSocket的优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3WebSocket%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">2.3WebSocket的工作过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="toc-number">2.3.0.1.</span> <span class="toc-text">连接建立阶段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%BC%80%E6%94%BE%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="toc-number">2.3.0.2.</span> <span class="toc-text">连接开放阶段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="toc-number">2.3.0.3.</span> <span class="toc-text">连接关闭阶段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E5%AE%8C%E6%88%90%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="toc-number">2.3.0.4.</span> <span class="toc-text">连接关闭完成阶段：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-WebSocket%E7%9A%84API"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 WebSocket的API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-WebSocket%E7%9A%84%E4%B8%8D%E8%B6%B3"><span class="toc-number">2.5.</span> <span class="toc-text">2.5 WebSocket的不足</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-WebSokcet%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.6.</span> <span class="toc-text">2.6 WebSokcet的应用场景</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">附录：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cookie%EF%BC%8CSession%E5%92%8CToken%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">Cookie，Session和Token：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ECookie%EF%BC%9A"><span class="toc-number">3.1.1.</span> <span class="toc-text">关于Cookie：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8ESession%EF%BC%9A"><span class="toc-number">3.1.2.</span> <span class="toc-text">关于Session：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EToken%EF%BC%9A"><span class="toc-number">3.1.3.</span> <span class="toc-text">关于Token：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="toc-number">3.1.4.</span> <span class="toc-text">区别：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#https%EF%BC%9A"><span class="toc-number">3.2.</span> <span class="toc-text">https：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFhttps%EF%BC%9A"><span class="toc-number">3.2.1.</span> <span class="toc-text">什么是https：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8A%A0%E5%AF%86%E4%BC%A0%E8%BE%93"><span class="toc-number">3.2.2.</span> <span class="toc-text">1. 加密传输</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E6%9C%BA%E5%88%B6%EF%BC%9A"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">加密机制：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="toc-number">3.2.2.1.1.</span> <span class="toc-text">共享密钥加密：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="toc-number">3.2.2.1.2.</span> <span class="toc-text">公开密钥加密：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%9A"><span class="toc-number">3.2.2.1.3.</span> <span class="toc-text">混合密钥加密：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="toc-number">3.2.3.</span> <span class="toc-text">2. 数据完整性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E4%BF%9D%E6%8A%A4%EF%BC%9A"><span class="toc-number">3.2.3.1.</span> <span class="toc-text">完整性保护：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81%EF%BC%88MAC%EF%BC%89"><span class="toc-number">3.2.3.1.1.</span> <span class="toc-text">消息认证码（MAC）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="toc-number">3.2.3.1.2.</span> <span class="toc-text">数字签名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-number">3.2.4.</span> <span class="toc-text">3. 身份认证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%9A"><span class="toc-number">3.2.4.1.</span> <span class="toc-text">数字证书：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84%EF%BC%88CA%EF%BC%89"><span class="toc-number">3.2.4.1.1.</span> <span class="toc-text">证书颁发机构（CA）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E5%86%85%E5%AE%B9"><span class="toc-number">3.2.4.1.2.</span> <span class="toc-text">数字证书内容</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.4.1.3.</span> <span class="toc-text">证书验证流程</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GET%E5%92%8CPOST%EF%BC%9A"><span class="toc-number">3.3.</span> <span class="toc-text">GET和POST：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GET%E4%B8%8EPOST%E7%9A%84%E4%B8%80%E4%BA%9B%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="toc-number">3.3.1.</span> <span class="toc-text">GET与POST的一些区别：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GET%E5%92%8CPOST%E7%9A%84%E8%81%8C%E8%83%BD%EF%BC%9A"><span class="toc-number">3.3.2.</span> <span class="toc-text">GET和POST的职能：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EGET%E8%AF%B7%E6%B1%82%E7%9A%84URL%E9%95%BF%E5%BA%A6%EF%BC%9A"><span class="toc-number">3.3.3.</span> <span class="toc-text">关于GET请求的URL长度：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EPOST%E6%AF%94GET%E6%9B%B4%E5%8A%A0%E5%AE%89%E5%85%A8%EF%BC%9A"><span class="toc-number">3.3.4.</span> <span class="toc-text">关于POST比GET更加安全：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Socket-IO"><span class="toc-number">3.4.</span> <span class="toc-text">Socket.IO:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSocket-IO"><span class="toc-number">3.4.1.</span> <span class="toc-text">什么是Socket.IO:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Socket-IO%E7%9A%84%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="toc-number">3.4.2.</span> <span class="toc-text">Socket.IO的优点：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7%E6%9B%B4%E5%A5%BD"><span class="toc-number">3.4.2.1.</span> <span class="toc-text">兼容性更好</span></a></li></ol></li></ol></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
